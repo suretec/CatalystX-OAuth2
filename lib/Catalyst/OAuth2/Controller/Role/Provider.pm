@@ -17,13 +17,15 @@ around create_action => sub {
   if (
     Moose::Util::does_role(
       $action, 'Catalyst::ActionRole::OAuth2::RequestAuth'
-    ))
+    )
+    )
   {
     $self->_request_auth_action($action);
   } elsif (
     Moose::Util::does_role(
       $action, 'Catalyst::ActionRole::OAuth2::GrantAuth'
-    ))
+    )
+    )
   {
     $self->_get_auth_token_via_auth_grant_action($action);
   }
@@ -33,8 +35,14 @@ around create_action => sub {
 
 sub check_provider_actions {
   my ($self) = @_;
-  return $self->_has__request_auth_action
-    && $self->_has__get_auth_token_via_auth_grant_action;
+  die
+    q{You need at least an auth action and a grant action for this controller to work}
+    unless $self->_has__request_auth_action
+      && $self->_has__get_auth_token_via_auth_grant_action;
 }
+
+after register_actions => sub {
+  shift->check_provider_actions;
+};
 
 1;

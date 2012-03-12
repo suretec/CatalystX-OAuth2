@@ -8,39 +8,51 @@ use lib 't/lib';
 use MyApp;
 
 my $ctl = MyApp->controller('OAuth2::Provider');
-ok($ctl->check_provider_actions);
-is($ctl->_request_auth_action, $ctl->action_for('request'));
-is($ctl->_get_auth_token_via_auth_grant_action, $ctl->action_for('grant'));
+lives_ok { $ctl->check_provider_actions };
+is( $ctl->_request_auth_action, $ctl->action_for('request') );
+is( $ctl->_get_auth_token_via_auth_grant_action, $ctl->action_for('grant') );
 
-=pod
+package MyApp::Mock::Controller;
+use Moose;
 
-my $mock = mock_context('MyApp');
+BEGIN { extends 'Catalyst::Controller' }
 
-my $c = $mock->(GET '/request');
+with 'Catalyst::OAuth2::Controller::Role::Provider';
 
-$c->dispatch;
+around check_provider_actions => sub {
+  die qq{yo, I'm dead dawg};
+};
 
-is_deeply $c->error, [], 'survives oauth2 dispatch';
-#lives_ok { $c->req->oauth2 } 'installs oauth2 role on requests';
+package main;
 
-=cut
+{
+
+  my $mock = mock_context('MyApp');
+  my $c    = $mock->( GET '/request' );
+
+  throws_ok {
+    MyApp::Mock::Controller->COMPONENT( MyApp => $c, {} )->register_actions($c);
+  }
+  qr/yo, I'm dead dawg/,
+    'provider actions checked when running register_actions';
+}
 
 sub mock_context {
-  my($class) = @_;
+  my ($class) = @_;
   sub {
-    my($req) = @_;
+    my ($req) = @_;
     my $c;
     test_psgi app => sub {
       my $env = shift;
-      $c = $class->prepare(env => $env, response_cb => sub {});
-      return [200, ['Content-type' => 'text/plain'], ['Created mock OK']]
+      $c = $class->prepare( env => $env, response_cb => sub { } );
+      return [ 200, [ 'Content-type' => 'text/plain' ], ['Created mock OK'] ];
       },
       client => sub {
-        my $cb = shift;
-        $cb->($req);
-    };
+      my $cb = shift;
+      $cb->($req);
+      };
     return $c;
-  }
+    }
 }
 
 done_testing();
