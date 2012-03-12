@@ -1,7 +1,7 @@
 package MyApp::Controller::OAuth2::Provider;
 use Moose;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
 with 'Catalyst::OAuth2::Controller::Role::Provider';
 
@@ -18,7 +18,6 @@ sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {
 
 }
 
-=pod
 
 sub grant : Does('OAuth2::GrantAuth') {
   my ( $self, $c ) = @_;
@@ -29,6 +28,8 @@ sub grant : Does('OAuth2::GrantAuth') {
 
   $oauth2->grant_scopes($scopes);
 }
+
+=pod
 
 sub token : Does('OAuth2::AuthToken::ViaAuthGrant') {
 }
