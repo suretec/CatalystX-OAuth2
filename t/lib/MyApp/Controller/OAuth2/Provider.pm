@@ -8,6 +8,8 @@ with 'Catalyst::OAuth2::Controller::Role::Provider';
 sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {
   my ( $self, $c ) = @_;
 
+=pod
+
   my $oauth2 = $c->req->oauth2;
 
   $oauth2->client_is_valid(1)
@@ -15,6 +17,8 @@ sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {
 
   $c->user_exists and $oauth2->user_is_valid(1)
     or $c->detach('/passthrulogin');
+
+=cut
 
 }
 
