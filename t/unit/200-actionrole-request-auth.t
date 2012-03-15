@@ -3,6 +3,7 @@ use Test::More;
 use Test::Exception;
 use Plack::Test;
 use HTTP::Request::Common;
+use URI;
 use Moose::Util;
 
 use lib 't/lib';
@@ -13,12 +14,25 @@ my $mock = mock_context('MyApp');
 
 {
   my $c = $mock->( GET '/request' );
-  ok(!$c->req->can('oauth2'), "doesn't install oauth2 accessors before the dispatch");
-  ok(!Moose::Util::does_role($c->req, 'Catalyst::OAuth2::Request'));
+  ok( !$c->req->can('oauth2'),
+    "doesn't install oauth2 accessors before the dispatch" );
+  ok( !Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   $c->dispatch;
-  is_deeply($c->error, [], 'dispatches to request action cleanly');
-  ok($c->req->can('oauth2'), "installs oauth2 accessors for the dispatch");
-  ok(Moose::Util::does_role($c->req, 'Catalyst::OAuth2::Request'));
+  is_deeply( $c->error, [], 'dispatches to request action cleanly' );
+  ok( $c->req->can('oauth2'), "installs oauth2 accessors for the dispatch" );
+  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+}
+
+{
+  my $uri = URI->new('/request');
+  $uri->query(
+    { response_type => 'code', client_id => 'foo', state => 'bar' } );
+  my $c = $mock->( GET $uri);
+  $c->dispatch;
+  my $res    = $c->res;
+  my $client = $c->controller->client_store($c)->find('foo');
+  is( $res->location, $client->endpoint );
+  is( $res->status,   302 );
 }
 
 sub mock_context {
