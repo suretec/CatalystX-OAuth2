@@ -18,21 +18,39 @@ my $mock = mock_context('MyApp');
     "doesn't install oauth2 accessors before the dispatch" );
   ok( !Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   $c->dispatch;
+  is(
+    $c->res->body,
+    'warning: response_type/client_id invalid or missing',
+    'displays warning to resource owner'
+  );
   is_deeply( $c->error, [], 'dispatches to request action cleanly' );
-  ok( $c->req->can('oauth2'), "installs oauth2 accessors for the dispatch" );
-  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( !$c->req->can('oauth2'),
+    "doesn't install oauth2 accessors if request isn't valid" );
+  ok( !Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
 }
 
 {
   my $uri = URI->new('/request');
-  $uri->query(
-    { response_type => 'code', client_id => 'foo', state => 'bar' } );
+  $uri->query_form(
+    { response_type => 'code',
+      client_id     => 'foo',
+      state         => 'bar',
+      redirect_uri  => '/client/foo'
+    }
+  );
   my $c = $mock->( GET $uri);
   $c->dispatch;
+  is_deeply( $c->error, [], 'dispatches to request action cleanly' );
+  is( $c->res->body, undef, q{doesn't produce warning} );
+  ok( $c->req->can('oauth2'),
+    "installs oauth2 accessors if request is valid" );
+  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   my $res    = $c->res;
   my $client = $c->controller->client_store($c)->find('foo');
-  is( $res->location, $client->endpoint );
-  is( $res->status,   302 );
+  is( $res->location,
+    $c->controller->action_for('request')
+      ->next_action_uri( $c->controller, $c ) );
+  is( $res->status, 302 );
 }
 
 sub mock_context {

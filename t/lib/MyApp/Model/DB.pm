@@ -8,6 +8,8 @@ use Moose;
 
 BEGIN { extends 'Catalyst::Model' }
 
+with 'Catalyst::OAuth2::ClientStore';
+
 sub find {
   my($self, $id) = @_;
   return Test::Client->new(id => $id);
@@ -22,5 +24,15 @@ sub endpoint {
   my($self) = @_;
   return URI->new('/client/' . $self->id);
 }
+
+my $code;
+sub create_code {
+  return $code = Test::Code->new;
+}
+
+package Test::Code;
+use Moose;
+
+sub as_string { 'foocode' }
 
 1;

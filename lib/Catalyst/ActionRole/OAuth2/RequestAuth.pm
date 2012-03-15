@@ -56,30 +56,37 @@ with 'Catalyst::OAuth2::ActionRole::Grant';
 
 =cut
 
+use Data::Dump;
+
 sub build_oauth2_request {
   my ( $self, $controller, $c ) = @_;
 
   my $store = $controller->client_store($c);
+  my $req;
   try {
-    my $req = Catalyst::OAuth2::Request::RequestAuth->new(
+    $req = Catalyst::OAuth2::Request::RequestAuth->new(
       %{ $c->req->query_parameters } );
     $req->client_store($store);
   }
   catch {
-
     # need to figure out a better way, but this will do for now
     $c->res->body('warning: response_type/client_id invalid or missing');
 
     $c->detach;
   };
+  return $req;
+}
 
+sub next_action_uri {
+  my($self, $controller, $c) = @_;
+  my $oauth2      = $c->req->oauth2;
+  my $next_action = $controller->_get_auth_token_via_auth_grant_action;
+  return $c->uri_for( $next_action, $oauth2->query_parameters );
 }
 
 after execute => sub {
   my ( $self, $controller, $c ) = @_;
-  my $oauth2      = $c->req->oauth2;
-  my $next_action = $controller->_get_auth_token_via_auth_grant_action;
-  my $uri         = $c->uri_for( $next_action, $oauth2->query_parameters );
+  my $uri = $self->next_action_uri($controller, $c);
   $c->res->redirect($uri);
 };
 
