@@ -20,7 +20,7 @@ has client_store => (
   predicate => 'has_store'
 );
 
-has query_parameters => ( is => 'ro', init_arg => undef, lazy_build => 1 );
+has query_parameters => ( is => 'rw', init_arg => undef, lazy_build => 1 );
 
 sub _params {qw(response_type redirect_uri scope state client_id)}
 

@@ -1,5 +1,7 @@
 package Catalyst::ActionRole::OAuth2::GrantAuth;
 use Moose::Role;
+use Try::Tiny;
+use Catalyst::OAuth2::Request::GrantAuth;
 
 with 'Catalyst::OAuth2::ActionRole::Grant';
 

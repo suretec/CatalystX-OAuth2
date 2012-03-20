@@ -26,15 +26,8 @@ sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
 
   my $oauth2 = $c->req->oauth2;
 
-  my $scopes = $c->req->query_parameters->{granted_scopes};
-
-  $oauth2->client_is_valid(1)
-    if $c->authenticate( $c->req->body_parameters, 'client' );
-
   $c->user_exists and $oauth2->user_is_valid(1)
     or $c->detach('/passthrulogin');
-
-  $oauth2->grant_scopes($scopes);
 }
 
 =pod

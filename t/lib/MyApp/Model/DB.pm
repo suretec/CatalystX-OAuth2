@@ -25,10 +25,9 @@ sub endpoint {
   return URI->new('/client/' . $self->id);
 }
 
-my $code;
-sub create_code {
-  return $code = Test::Code->new;
-}
+sub create_code { Test::Code->new }
+
+sub find_code { Test::Code->new }
 
 package Test::Code;
 use Moose;

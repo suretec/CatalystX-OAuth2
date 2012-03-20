@@ -1,10 +1,17 @@
 package Catalyst::OAuth2::Request::GrantAuth;
 use Moose;
-
+use URI;
 with 'Catalyst::OAuth2';
 
+has user_is_valid => (isa => 'Bool', is => 'rw', default => 0);
 has approved => (isa => 'Bool', is => 'rw', default => 0);
 has code => (is => 'ro', required => 1);
+has granted_scopes => (isa => 'ArrayRef', is => 'rw', default => sub {[]});
+
+around _params => sub {
+  my $super = shift;
+  $super->(@_), qw(code granted_scopes);
+};
 
 sub _build_query_parameters {
   my ($self) = @_;
@@ -38,7 +45,9 @@ sub _build_query_parameters {
 
 sub next_action_uri {
   my($self, $controller, $c) = @_;
-  $c->req->oauth2->redirect_uri;
+  my $uri = URI->new($c->req->oauth2->redirect_uri);
+  $uri->query_form($self->query_parameters);
+  return $uri;
 }
 
 1;
