@@ -3,6 +3,7 @@ use Test::More;
 use Test::Exception;
 use Plack::Test;
 use HTTP::Request::Common;
+use CatalystX::Test::MockContext;
 use URI;
 use Moose::Util;
 
@@ -30,14 +31,15 @@ my $mock = mock_context('MyApp');
 }
 
 {
-  my $uri = URI->new('/request');
-  $uri->query_form(
-    { response_type => 'code',
-      client_id     => 'foo',
-      state         => 'bar',
-      redirect_uri  => '/client/foo'
-    }
-  );
+  my $uri   = URI->new('/request');
+  my $query = {
+    response_type => 'code',
+    client_id     => 'foo',
+    state         => 'bar',
+    redirect_uri  => '/client/foo'
+  };
+
+  $uri->query_form($query);
   my $c = $mock->( GET $uri);
   $c->dispatch;
   is_deeply( $c->error, [], 'dispatches to request action cleanly' );
@@ -47,28 +49,12 @@ my $mock = mock_context('MyApp');
   ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   my $res    = $c->res;
   my $client = $c->controller->client_store($c)->find('foo');
-  is( $res->location,
-    $c->controller->action_for('request')
+  ok( my $redirect =
+      $c->controller->action_for('request')
       ->next_action_uri( $c->controller, $c ) );
+  is( $res->location, $redirect, 'redirects to the correct action' );
+  is_deeply( { $redirect->query_form }, { %$query, code => 'foocode' } );
   is( $res->status, 302 );
-}
-
-sub mock_context {
-  my ($class) = @_;
-  sub {
-    my ($req) = @_;
-    my $c;
-    test_psgi app => sub {
-      my $env = shift;
-      $c = $class->prepare( env => $env, response_cb => sub { } );
-      return [ 200, [ 'Content-type' => 'text/plain' ], ['Created mock OK'] ];
-      },
-      client => sub {
-      my $cb = shift;
-      $cb->($req);
-      };
-    return $c;
-    }
 }
 
 done_testing();

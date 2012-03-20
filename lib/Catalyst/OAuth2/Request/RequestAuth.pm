@@ -46,7 +46,9 @@ sub _build_query_parameters {
       . $self->response_type
       . "' as a method for obtaining an authorization code",
     %q
-    };
+  };
+
+  $q{response_type} = $self->response_type;
 
   my $store  = $self->client_store;
   my $client = $store->find( $self->client_id )
@@ -57,14 +59,19 @@ sub _build_query_parameters {
       . ' is not authorized to access this resource'
     };
 
+  $q{client_id} = $self->client_id;
+
   $client->endpoint eq $self->redirect_uri
     or return {
     error => 'invalid_request',
     error_description =>
       'redirection_uri does not match the registerd client endpoint'
-    };
+  };
 
-  $q{code} = $client->create_code;
+  $q{redirect_uri} = $self->redirect_uri;
+
+  my $code = $client->create_code;
+  $q{code} = $code->as_string;
 
   return \%q;
 }
