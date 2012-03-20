@@ -3,6 +3,7 @@ use Test::More;
 use Test::Exception;
 use Plack::Test;
 use HTTP::Request::Common;
+use CatalystX::Test::MockContext;
 
 use lib 't/lib';
 use MyApp;
@@ -35,24 +36,6 @@ package main;
   }
   qr/yo, I'm dead dawg/,
     'provider actions checked when running register_actions';
-}
-
-sub mock_context {
-  my ($class) = @_;
-  sub {
-    my ($req) = @_;
-    my $c;
-    test_psgi app => sub {
-      my $env = shift;
-      $c = $class->prepare( env => $env, response_cb => sub { } );
-      return [ 200, [ 'Content-type' => 'text/plain' ], ['Created mock OK'] ];
-      },
-      client => sub {
-      my $cb = shift;
-      $cb->($req);
-      };
-    return $c;
-    }
 }
 
 done_testing();

@@ -21,7 +21,7 @@ sub client_store {
 
 sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {}
 
-sub grant : Does('OAuth2::GrantAuth') {
+sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
   my ( $self, $c ) = @_;
 
   my $oauth2 = $c->req->oauth2;
