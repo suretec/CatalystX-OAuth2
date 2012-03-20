@@ -30,13 +30,11 @@ sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
     or $c->detach('/passthrulogin');
 }
 
+sub token : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
+
 =pod
 
-sub token : Does('OAuth2::AuthToken::ViaAuthGrant') {
-}
-
-sub refresh : Does('OAuth2::AuthToken::ViaRefreshToken') {
-}
+sub refresh : Does('OAuth2::AuthToken::ViaRefreshToken') {}
 
 =cut
 

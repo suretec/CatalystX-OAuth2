@@ -1,7 +1,8 @@
 package Catalyst::OAuth2::Request::GrantAuth;
 use Moose;
 use URI;
-with 'Catalyst::OAuth2';
+
+with 'Catalyst::OAuth2::Grant';
 
 has user_is_valid => (isa => 'Bool', is => 'rw', default => 0);
 has approved => (isa => 'Bool', is => 'rw', default => 0);

@@ -6,12 +6,8 @@ use Moose::Role;
 requires '_build_query_parameters';
 requires 'next_action_uri';
 
-has response_type => ( is => 'ro', required  => 1 );
-has client_id     => ( is => 'ro', required  => 1 );
 # spec isn't clear re missing endpoint uris, being strict for now
 has redirect_uri  => ( is => 'ro', required => 1 );
-has scope         => ( is => 'ro', predicate => 'has_scope' );
-has state         => ( is => 'ro', predicate => 'has_state' );
 
 has client_store => (
   is        => 'rw',

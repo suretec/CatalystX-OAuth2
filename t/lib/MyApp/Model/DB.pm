@@ -14,6 +14,7 @@ sub find {
   my($self, $id) = @_;
   return Test::Client->new(id => $id);
 }
+sub find_code { Test::Code->new }
 
 package Test::Client;
 use Moose;
@@ -26,12 +27,23 @@ sub endpoint {
 }
 
 sub create_code { Test::Code->new }
-
 sub find_code { Test::Code->new }
 
 package Test::Code;
 use Moose;
 
 sub as_string { 'foocode' }
+
+sub create_token { Test::Token->new }
+sub find_token { Test::Token->new }
+sub scope { 'foo bar' }
+
+package Test::Token;
+use Moose;
+
+sub type { 'bearer' }
+sub expires_in { 3600 }
+sub as_string { 'footoken' }
+sub scope { 'foo bar' }
 
 1;

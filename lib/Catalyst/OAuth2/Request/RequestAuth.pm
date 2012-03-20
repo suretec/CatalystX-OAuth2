@@ -1,7 +1,7 @@
 package Catalyst::OAuth2::Request::RequestAuth;
 use Moose;
 
-with 'Catalyst::OAuth2';
+with 'Catalyst::OAuth2::Grant';
 
 sub _build_query_parameters {
   my ($self) = @_;
