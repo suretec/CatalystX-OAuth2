@@ -1,7 +1,7 @@
-package Catalyst::ActionRole::OAuth2::AuthToken::ViaAuthGrant;
+package Catalyst::ActionRole::OAuth2::AuthToken::ViaRefreshToken;
 use Moose::Role;
 use Try::Tiny;
-use Catalyst::OAuth2::Request::AuthToken;
+use Catalyst::OAuth2::Request::RefreshToken;
 
 with 'Catalyst::OAuth2::ActionRole::Token';
 
@@ -12,7 +12,7 @@ sub build_oauth2_request {
   my $req;
 
   try {
-    $req = Catalyst::OAuth2::Request::AuthToken->new(
+    $req = Catalyst::OAuth2::Request::RefreshToken->new(
       %{ $c->req->query_parameters } );
     $req->client_store($store);
   }

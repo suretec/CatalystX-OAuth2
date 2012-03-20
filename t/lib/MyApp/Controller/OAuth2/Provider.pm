@@ -32,11 +32,7 @@ sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
 
 sub token : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
 
-=pod
-
-sub refresh : Does('OAuth2::AuthToken::ViaRefreshToken') {}
-
-=cut
+sub refresh : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaRefreshToken') {}
 
 
 1;

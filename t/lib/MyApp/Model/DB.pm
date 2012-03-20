@@ -15,6 +15,7 @@ sub find {
   return Test::Client->new(id => $id);
 }
 sub find_code { Test::Code->new }
+sub find_refresh_token { Test::Code->new }
 
 package Test::Client;
 use Moose;
