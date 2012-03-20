@@ -40,7 +40,7 @@ my $mock = mock_context('MyApp');
   };
 
   $uri->query_form($query);
-  my $c = $mock->( GET $uri);
+  my $c = $mock->( GET $uri );
   $c->dispatch;
   is_deeply( $c->error, [], 'dispatches to request action cleanly' );
   is( $c->res->body, undef, q{doesn't produce warning} );
@@ -49,9 +49,7 @@ my $mock = mock_context('MyApp');
   ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   my $res    = $c->res;
   my $client = $c->controller->client_store($c)->find('foo');
-  ok( my $redirect =
-      $c->controller->action_for('request')
-      ->next_action_uri( $c->controller, $c ) );
+  ok( my $redirect = $c->req->oauth2->next_action_uri($c->controller, $c) );
   is( $res->location, $redirect, 'redirects to the correct action' );
   is_deeply( { $redirect->query_form }, { %$query, code => 'foocode' } );
   is( $res->status, 302 );

@@ -1,7 +1,10 @@
-package Catalyst::OAuth2::Request::RequestAuth;
+package Catalyst::OAuth2::Request::GrantAuth;
 use Moose;
 
 with 'Catalyst::OAuth2';
+
+has approved => (isa => 'Bool', is => 'rw', default => 0);
+has code => (is => 'ro', required => 1);
 
 sub _build_query_parameters {
   my ($self) = @_;
@@ -15,9 +18,7 @@ sub _build_query_parameters {
       . $self->response_type
       . "' as a method for obtaining an authorization code",
     %q
-    };
-
-  $q{response_type} = $self->response_type;
+  };
 
   my $store  = $self->client_store;
   my $client = $store->find( $self->client_id )
@@ -26,29 +27,18 @@ sub _build_query_parameters {
     error_description => 'the client identified by '
       . $self->client_id
       . ' is not authorized to access this resource'
-    };
+  };
 
-  $q{client_id} = $self->client_id;
-
-  $client->endpoint eq $self->redirect_uri
-    or return {
-    error => 'invalid_request',
-    error_description =>
-      'redirection_uri does not match the registerd client endpoint'
-    };
-
-  $q{redirect_uri} = $self->redirect_uri;
-
-  my $code = $client->create_code;
+  my $code = $client->find_code($self->code);
+  $code->activate if $self->approved;
   $q{code} = $code->as_string;
 
   return \%q;
 }
 
 sub next_action_uri {
-  my ( $self, $controller, $c ) = @_;
-  $c->uri_for( $controller->_get_auth_token_via_auth_grant_action,
-    $self->query_parameters );
+  my($self, $controller, $c) = @_;
+  $c->req->oauth2->redirect_uri;
 }
 
 1;
