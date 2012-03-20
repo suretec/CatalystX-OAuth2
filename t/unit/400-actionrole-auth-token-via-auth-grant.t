@@ -1,10 +1,11 @@
 use strictures 1;
 use Test::More;
-
+use JSON::Any;
 use HTTP::Request::Common;
 use lib 't/lib';
 use CatalystX::Test::MockContext;
 
+my $json = JSON::Any->new;
 my $mock = mock_context('MyApp');
 
 {
@@ -17,16 +18,16 @@ my $mock = mock_context('MyApp');
   );
   my $c = $mock->( GET $uri );
   $c->dispatch;
+  is_deeply($c->error, []);
   my $res = $c->res;
-  my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c );
   is_deeply(
-    { $redirect->query_form },
+    $json->jsonToObj($res->body),
     { access_token => 'footoken',
       token_type   => 'bearer',
       expires_in   => 3600
     }
   );
-  is( $res->location, $redirect );
+  is( $res->status, 200 );
 }
 
 done_testing();

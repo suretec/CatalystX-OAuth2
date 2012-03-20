@@ -28,11 +28,4 @@ sub _build_query_parameters {
   };
 }
 
-sub next_action_uri {
-  my($self, $c) = @_;
-  my $uri = URI->new($self->redirect_uri);
-  $uri->query_form($self->query_parameters);
-  return $uri;
-}
-
 1;

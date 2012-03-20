@@ -3,6 +3,8 @@ use Moose::Role;
 
 with 'Catalyst::OAuth2';
 
+requires 'next_action_uri';
+
 has response_type => ( is => 'ro', required  => 1 );
 has client_id     => ( is => 'ro', required  => 1 );
 has scope         => ( is => 'ro', predicate => 'has_scope' );

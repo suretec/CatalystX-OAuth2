@@ -4,7 +4,6 @@ use Moose::Role;
 # ABSTRACT: OAuth2 services for Catalyst
 
 requires '_build_query_parameters';
-requires 'next_action_uri';
 
 # spec isn't clear re missing endpoint uris, being strict for now
 has redirect_uri  => ( is => 'ro', required => 1 );
