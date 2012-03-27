@@ -19,8 +19,8 @@ sub _build_query_parameters {
 
   $q{response_type} = $self->response_type;
 
-  my $store  = $self->client_store;
-  my $client = $store->find( $self->client_id )
+  my $store  = $self->store;
+  my $client = $store->find_client( $self->client_id )
     or return {
     error             => 'unauthorized_client',
     error_description => 'the client identified by '
@@ -39,7 +39,7 @@ sub _build_query_parameters {
 
   $q{redirect_uri} = $self->redirect_uri;
 
-  my $code = $client->create_code;
+  my $code = $store->create_client_code($self->client_id);
   $q{code} = $code->as_string;
 
   return \%q;

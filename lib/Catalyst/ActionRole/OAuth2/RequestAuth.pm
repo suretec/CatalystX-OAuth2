@@ -9,12 +9,12 @@ with 'Catalyst::OAuth2::ActionRole::Grant';
 sub build_oauth2_request {
   my ( $self, $controller, $c ) = @_;
 
-  my $store = $controller->client_store($c);
+  my $store = $controller->store;
   my $req;
   try {
     $req = Catalyst::OAuth2::Request::RequestAuth->new(
       %{ $c->req->query_parameters } );
-    $req->client_store($store);
+    $req->store($store);
   }
   catch {
 

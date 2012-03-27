@@ -28,8 +28,8 @@ sub _build_query_parameters {
     %q
   };
 
-  my $store  = $self->client_store;
-  my $client = $store->find( $self->client_id )
+  my $store  = $self->store;
+  my $client = $store->find_client( $self->client_id )
     or return {
     error             => 'unauthorized_client',
     error_description => 'the client identified by '
@@ -37,7 +37,7 @@ sub _build_query_parameters {
       . ' is not authorized to access this resource'
   };
 
-  my $code = $client->find_code($self->code);
+  my $code = $store->find_client_code($self->code, $self->client_id);
   $code->activate if $self->approved;
   $q{code} = $code->as_string;
 

@@ -8,9 +8,9 @@ requires '_build_query_parameters';
 # spec isn't clear re missing endpoint uris, being strict for now
 has redirect_uri  => ( is => 'ro', required => 1 );
 
-has client_store => (
+has store => (
   is        => 'rw',
-  does      => 'Catalyst::OAuth2::ClientStore',
+  does      => 'Catalyst::OAuth2::Store',
   init_arg  => undef,
   predicate => 'has_store'
 );

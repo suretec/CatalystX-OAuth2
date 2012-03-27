@@ -8,13 +8,13 @@ with 'Catalyst::OAuth2::ActionRole::Token';
 sub build_oauth2_request {
   my ( $self, $controller, $c ) = @_;
 
-  my $store = $controller->client_store($c);
+  my $store = $controller->store;
   my $req;
 
   try {
     $req = Catalyst::OAuth2::Request::AuthToken->new(
       %{ $c->req->query_parameters } );
-    $req->client_store($store);
+    $req->store($store);
   }
   catch {
     # need to figure out a better way, but this will do for now

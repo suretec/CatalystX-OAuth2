@@ -11,7 +11,7 @@ around _params => sub {shift->(@_), qw(code grant_type)};
 sub _build_query_parameters {
   my ($self) = @_;
 
-  my $code = $self->client_store->find_code( $self->code )
+  my $code = $self->store->find_client_code( $self->code )
     or return {
     error             => 'invalid_grant',
     error_description => 'The provided authorization grant '
@@ -20,7 +20,7 @@ sub _build_query_parameters {
       . 'or was issued to another client.'
     };
 
-  my $token = $code->create_token();
+  my $token = $self->store->create_access_token($self->code);
   return {
     access_token => $token->as_string,
     token_type   => $token->type,
