@@ -32,7 +32,10 @@ package main;
   my $c    = $mock->( GET '/request' );
 
   throws_ok {
-    MyApp::Mock::Controller->COMPONENT( MyApp => $c, {} )->register_actions($c);
+    MyApp::Mock::Controller->COMPONENT(
+      MyApp => $c,
+      { store => { class => 'DBIC', client_model => 'DB::Cient' } }
+    )->register_actions($c);
   }
   qr/yo, I'm dead dawg/,
     'provider actions checked when running register_actions';

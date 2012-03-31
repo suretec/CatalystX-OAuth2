@@ -34,9 +34,9 @@ my $mock = mock_context('MyApp');
   my $uri   = URI->new('/request');
   my $query = {
     response_type => 'code',
-    client_id     => 'foo',
+    client_id     => 1,
     state         => 'bar',
-    redirect_uri  => '/client/foo'
+    redirect_uri  => '/foo'
   };
 
   $uri->query_form($query);
@@ -48,10 +48,42 @@ my $mock = mock_context('MyApp');
     "installs oauth2 accessors if request is valid" );
   ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   my $res    = $c->res;
-  my $client = $c->controller->client_store($c)->find('foo');
-  ok( my $redirect = $c->req->oauth2->next_action_uri($c->controller, $c) );
+  my $client = $c->controller->store->find_client(1);
+  ok( my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c ) );
   is( $res->location, $redirect, 'redirects to the correct action' );
-  is_deeply( { $redirect->query_form }, { %$query, code => 'foocode' } );
+  is_deeply( { $redirect->query_form }, { %$query, code => 1 } );
+  is( $client->codes,                   1 );
+  is( $client->codes->first->as_string, 1 );
+  is( $res->status,                     302 );
+}
+
+{
+  my $uri   = URI->new('/secret/request');
+  my $query = {
+    response_type => 'code',
+    client_id     => 1,
+    state         => 'bar',
+    redirect_uri  => '/foo',
+    access_secret => 'foosecret'
+  };
+
+  $uri->query_form($query);
+  my $c = $mock->( GET $uri );
+  $c->dispatch;
+  is_deeply( $c->error, [], 'dispatches to request action cleanly' );
+  is( $c->res->body, undef, q{doesn't produce warning} );
+  ok( $c->req->can('oauth2'),
+    "installs oauth2 accessors if request is valid" );
+  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  my $res    = $c->res;
+  my $client = $c->controller->store->find_client(1);
+  ok( my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c ) );
+  is( $res->location, $redirect, 'redirects to the correct action' );
+  delete $query->{access_secret};
+  is_deeply( { $redirect->query_form }, { %$query, code => 2 } )
+    or diag( Data::Dump::dump( $redirect->query_form ) );
+  is( $client->codes, 2 );
+  is( ( $client->codes->all )[-1]->as_string, 2 );
   is( $res->status, 302 );
 }
 

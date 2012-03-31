@@ -8,21 +8,24 @@ use CatalystX::Test::MockContext;
 my $json = JSON::Any->new;
 my $mock = mock_context('MyApp');
 
+my $code = MyApp->model('DB::Code')
+  ->create( { client => { endpoint => '/client/foo' } } );
+
 {
   my $uri = URI->new('/token');
   $uri->query_form(
     { grant_type   => 'authorization_code',
       redirect_uri => '/client/foo',
-      code         => 'foocode'
+      code         => $code->as_string
     }
   );
   my $c = $mock->( GET $uri );
   $c->dispatch;
-  is_deeply($c->error, []);
+  is_deeply( $c->error, [] );
   my $res = $c->res;
   is_deeply(
-    $json->jsonToObj($res->body),
-    { access_token => 'footoken',
+    $json->jsonToObj( $res->body ),
+    { access_token => 1,
       token_type   => 'bearer',
       expires_in   => 3600
     }

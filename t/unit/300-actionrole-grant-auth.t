@@ -7,14 +7,17 @@ use CatalystX::Test::MockContext;
 
 my $mock = mock_context('MyApp');
 
+my $code = MyApp->model('DB::Code')
+  ->create( { client => { endpoint => '/client/foo' } } );
+
 {
   my $uri = URI->new('/grant');
   $uri->query_form(
     { response_type  => 'code',
-      client_id      => 'foo',
+      client_id      => 1,
       state          => 'bar',
       redirect_uri   => '/client/foo',
-      code           => 'foocode',
+      code           => $code->as_string,
       granted_scopes => [qw(foo bar)]
     }
   );
@@ -26,11 +29,11 @@ my $mock = mock_context('MyApp');
     "installs oauth2 accessors if request is valid" );
   ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
   my $res      = $c->res;
-  my $client   = $c->controller->client_store($c)->find('foo');
+  my $client   = $c->controller->store->find_client(1);
   isa_ok(my $oauth2 = $c->req->oauth2, 'Catalyst::OAuth2::Request::GrantAuth');
   my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c );
   is_deeply( { $redirect->query_form },
-    { code => 'foocode', state => 'bar' } );
+    { code => $code->as_string, state => 'bar' } );
   is( $res->location, $redirect );
   is( $res->status,   302 );
 }

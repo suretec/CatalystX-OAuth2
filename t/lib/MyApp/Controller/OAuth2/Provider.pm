@@ -7,17 +7,12 @@ use URI;
 
 with 'Catalyst::OAuth2::Controller::Role::Provider';
 
-# my $client = $store->find($string);
-# my $endpoint = $client->endpoint;
-# my $code = $client->create_code;
-# my $code = $client->find_code($string);
-# $code->as_string;
-# $code->activate;
-# $code->deactivate;
-sub client_store {
-  my($self, $c) = @_;
-  return $c->model('DB::OAuth2::Client');
-}
+__PACKAGE__->config(
+  store => {
+    class => 'DBIC',
+    client_model => 'DB::Client'
+  }
+);
 
 sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {}
 

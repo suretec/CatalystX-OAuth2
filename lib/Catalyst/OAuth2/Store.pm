@@ -10,6 +10,7 @@ requires qw(
   deactivate_client_code
   create_access_token
   find_client_code
+  verify_access_secret
 );
 
 1;
