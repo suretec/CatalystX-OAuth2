@@ -119,9 +119,19 @@ sub find_code_from_refresh {
 }
 
 sub verify_access_secret {
-  my($self, $client_id, $access_secret) = @_;
+  my ( $self, $client_id, $access_secret ) = @_;
   my $client = $self->find_client($client_id);
   return $client->access_secret eq $access_secret;
+}
+
+sub verify_client_token {
+  my ( $self, $client_id, $access_token ) = @_;
+  my $client = $self->find_client($client_id);
+  return 0 unless defined $access_token;
+  return 1
+    if $client->related_resultset( $self->code_relation )
+      ->related_resultset( $self->token_relation )->find($access_token);
+  return 0;
 }
 
 1;

@@ -9,7 +9,7 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key(qw(id));
 __PACKAGE__->belongs_to(
-  code => 'MyApp::Schema::Code' => { 'foreign.client_id' => 'self.id' } );
+  code => 'MyApp::Schema::Code' => { 'foreign.id' => 'self.code_id' } );
 __PACKAGE__->might_have( refresh_token => 'MyApp::Schema::RefreshToken' =>
     { 'foreign.access_token_id' => 'self.id' } );
 

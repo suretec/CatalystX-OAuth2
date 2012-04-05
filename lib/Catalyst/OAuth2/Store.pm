@@ -11,6 +11,7 @@ requires qw(
   create_access_token
   find_client_code
   verify_access_secret
+  verify_client_token
 );
 
 1;
