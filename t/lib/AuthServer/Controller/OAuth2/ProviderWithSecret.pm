@@ -1,4 +1,4 @@
-package MyApp::Controller::OAuth2::ProviderWithSecret;
+package AuthServer::Controller::OAuth2::ProviderWithSecret;
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole' }

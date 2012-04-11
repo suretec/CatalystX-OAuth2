@@ -8,10 +8,10 @@ use URI;
 use Moose::Util;
 
 use lib 't/lib';
-use MyApp;
+use AuthServer;
 
-my $ctl  = MyApp->controller('OAuth2::Provider');
-my $mock = mock_context('MyApp');
+my $ctl  = AuthServer->controller('OAuth2::Provider');
+my $mock = mock_context('AuthServer');
 
 {
   my $c = $mock->( GET '/request' );

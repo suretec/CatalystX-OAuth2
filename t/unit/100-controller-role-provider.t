@@ -6,14 +6,14 @@ use HTTP::Request::Common;
 use CatalystX::Test::MockContext;
 
 use lib 't/lib';
-use MyApp;
+use AuthServer;
 
-my $ctl = MyApp->controller('OAuth2::Provider');
+my $ctl = AuthServer->controller('OAuth2::Provider');
 lives_ok { $ctl->check_provider_actions };
 is( $ctl->_request_auth_action, $ctl->action_for('request') );
 is( $ctl->_get_auth_token_via_auth_grant_action, $ctl->action_for('grant') );
 
-package MyApp::Mock::Controller;
+package AuthServer::Mock::Controller;
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -28,12 +28,12 @@ package main;
 
 {
 
-  my $mock = mock_context('MyApp');
+  my $mock = mock_context('AuthServer');
   my $c    = $mock->( GET '/request' );
 
   throws_ok {
-    MyApp::Mock::Controller->COMPONENT(
-      MyApp => $c,
+    AuthServer::Mock::Controller->COMPONENT(
+      AuthServer => $c,
       { store => { class => 'DBIC', client_model => 'DB::Cient' } }
     )->register_actions($c);
   }

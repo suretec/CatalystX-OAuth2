@@ -6,10 +6,10 @@ use lib 't/lib';
 use CatalystX::Test::MockContext;
 
 my $json = JSON::Any->new;
-my $mock = mock_context('MyApp');
+my $mock = mock_context('AuthServer');
 
 my $refresh =
-  MyApp->model('DB::RefreshToken')
+  AuthServer->model('DB::RefreshToken')
   ->create( { client => { endpoint => '/client/foo', codes => [ {} ] } } );
 
 {

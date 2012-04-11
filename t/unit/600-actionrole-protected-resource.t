@@ -4,9 +4,9 @@ use HTTP::Request::Common;
 use CatalystX::Test::MockContext;
 use lib 't/lib';
 
-my $mock = mock_context('MyApp');
+my $mock = mock_context('AuthServer');
 
-my $client = MyApp->model('DB::Client')->first;
+my $client = AuthServer->model('DB::Client')->first;
 my $code = $client->codes->create( { tokens => [ {} ] } );
 
 my $token = $code->tokens->first;

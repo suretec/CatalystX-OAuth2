@@ -5,11 +5,11 @@ use CatalystX::Test::MockContext;
 use HTTP::Request::Common;
 use JSON::Any;
 use lib 't/lib';
-use MyApp;
+use AuthServer;
 
 use Catalyst::Authentication::Credential::OAuth2;
 
-my $mock = mock_context('MyApp');
+my $mock = mock_context('AuthServer');
 
 {
   my $cred = Catalyst::Authentication::Credential::OAuth2->new(

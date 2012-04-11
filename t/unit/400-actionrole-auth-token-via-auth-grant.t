@@ -6,9 +6,9 @@ use lib 't/lib';
 use CatalystX::Test::MockContext;
 
 my $json = JSON::Any->new;
-my $mock = mock_context('MyApp');
+my $mock = mock_context('AuthServer');
 
-my $code = MyApp->model('DB::Code')
+my $code = AuthServer->model('DB::Code')
   ->create( { client => { endpoint => '/client/foo' } } );
 
 {

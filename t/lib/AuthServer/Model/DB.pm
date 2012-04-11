@@ -1,4 +1,4 @@
-package MyApp::Schema::Token;
+package AuthServer::Schema::Token;
 use parent 'DBIx::Class';
 
 __PACKAGE__->load_components(qw(Core));
@@ -9,15 +9,15 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key(qw(id));
 __PACKAGE__->belongs_to(
-  code => 'MyApp::Schema::Code' => { 'foreign.id' => 'self.code_id' } );
-__PACKAGE__->might_have( refresh_token => 'MyApp::Schema::RefreshToken' =>
+  code => 'AuthServer::Schema::Code' => { 'foreign.id' => 'self.code_id' } );
+__PACKAGE__->might_have( refresh_token => 'AuthServer::Schema::RefreshToken' =>
     { 'foreign.access_token_id' => 'self.id' } );
 
 sub as_string  { shift->id }
 sub type       {'bearer'}
 sub expires_in {3600}
 
-package MyApp::Schema::RefreshToken;
+package AuthServer::Schema::RefreshToken;
 use parent 'DBIx::Class';
 
 __PACKAGE__->load_components(qw(Core));
@@ -29,15 +29,15 @@ __PACKAGE__->add_columns(
   access_token_id => { is_nullable => 1, default_value => undef }
 );
 __PACKAGE__->set_primary_key(qw(id));
-__PACKAGE__->belongs_to( access_token => 'MyApp::Schema::Token' =>
+__PACKAGE__->belongs_to( access_token => 'AuthServer::Schema::Token' =>
     { 'foreign.id' => 'self.access_token_id' } );
 
 sub as_string { shift->id }
 
 __PACKAGE__->belongs_to(
-  client => 'MyApp::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
+  client => 'AuthServer::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
 
-package MyApp::Schema::Client;
+package AuthServer::Schema::Client;
 use parent 'DBIx::Class';
 
 __PACKAGE__->load_components(qw(Core));
@@ -49,11 +49,11 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key('id');
 __PACKAGE__->has_many(
-  codes => 'MyApp::Schema::Code' => { 'foreign.client_id' => 'self.id' } );
-__PACKAGE__->has_many( refresh_tokens => 'MyApp::Schema::RefreshToken' =>
+  codes => 'AuthServer::Schema::Code' => { 'foreign.client_id' => 'self.id' } );
+__PACKAGE__->has_many( refresh_tokens => 'AuthServer::Schema::RefreshToken' =>
     { 'foreign.client_id' => 'self.id' } );
 
-package MyApp::Schema::Code;
+package AuthServer::Schema::Code;
 use parent 'DBIx::Class';
 
 __PACKAGE__->load_components(qw(Core));
@@ -65,24 +65,24 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key(qw(id));
 __PACKAGE__->belongs_to(
-  client => 'MyApp::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
+  client => 'AuthServer::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
 __PACKAGE__->has_many(
-  tokens => 'MyApp::Schema::Token' => { 'foreign.code_id' => 'self.id' } );
+  tokens => 'AuthServer::Schema::Token' => { 'foreign.code_id' => 'self.id' } );
 
 sub as_string { shift->id }
 
-package MyApp::Schema;
+package AuthServer::Schema;
 use parent 'DBIx::Class::Schema';
 
 __PACKAGE__->load_classes(qw(Client Code Token RefreshToken));
 
-package MyApp::Model::DB;
+package AuthServer::Model::DB;
 use Moose;
 
 BEGIN { extends 'Catalyst::Model::DBIC::Schema' }
 
 __PACKAGE__->config(
-  schema_class => 'MyApp::Schema',
+  schema_class => 'AuthServer::Schema',
   connect_info => [ 'dbi:SQLite:dbname=:memory:', '', '' ]
 );
 
