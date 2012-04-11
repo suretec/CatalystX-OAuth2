@@ -12,12 +12,12 @@ use Catalyst::Authentication::Credential::OAuth2;
 my $mock = mock_context('AuthServer');
 
 {
-  my $cred = Catalyst::Authentication::Credential::OAuth2->new(
+  my $cred = Catalyst::Authentication::Credential::OAuth2->new({
     grant_uri     => 'http://server.foo/grant',
     token_uri     => 'http://server.foo/token',
     client_id     => 42,
     client_secret => 'foosecret'
-  );
+  });
   my $c     = $mock->( GET '/' );
   my $realm = Test::MockObject->new;
 
@@ -60,13 +60,13 @@ my $j = JSON::Any->new;
   my $user  = Test::MockObject->new;
   $realm->mock( find_user => sub {$user} );
 
-  my $cred = Catalyst::Authentication::Credential::OAuth2->new(
+  my $cred = Catalyst::Authentication::Credential::OAuth2->new({
     grant_uri     => 'http://server.foo',
     token_uri     => 'http://server.foo/token',
     client_id     => 42,
     client_secret => 'foosecret',
     ua            => $ua
-  );
+  });
 
   ok( $cred->authenticate( $c, $realm, {} ) );
 

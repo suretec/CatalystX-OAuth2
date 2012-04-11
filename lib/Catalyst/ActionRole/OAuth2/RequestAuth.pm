@@ -22,7 +22,7 @@ sub build_oauth2_request {
   catch {
 
     # need to figure out a better way, but this will do for now
-    $c->res->body('warning: response_type/client_id invalid or missing');
+    $c->res->body(qq{warning: response_type/client_id invalid or missing});
 
     $c->detach;
   };

@@ -36,7 +36,7 @@ my $mock = mock_context('AuthServer');
     response_type => 'code',
     client_id     => 1,
     state         => 'bar',
-    redirect_uri  => '/foo'
+    redirect_uri  => 'http://localhost/auth'
   };
 
   $uri->query_form($query);
@@ -51,7 +51,8 @@ my $mock = mock_context('AuthServer');
   my $client = $c->controller->store->find_client(1);
   ok( my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c ) );
   is( $res->location, $redirect, 'redirects to the correct action' );
-  is_deeply( { $redirect->query_form }, { %$query, code => 1 } );
+  is_deeply( { $redirect->query_form }, { %$query, code => 1 } )
+    or diag(Data::Dump::dump({$redirect->query_form}));
   is( $client->codes,                   1 );
   is( $client->codes->first->as_string, 1 );
   is( $res->status,                     302 );
@@ -63,7 +64,7 @@ my $mock = mock_context('AuthServer');
     response_type => 'code',
     client_id     => 1,
     state         => 'bar',
-    redirect_uri  => '/foo',
+    redirect_uri  => 'http://localhost/auth',
     access_secret => 'foosecret'
   };
 

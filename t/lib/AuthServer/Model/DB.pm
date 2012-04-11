@@ -10,7 +10,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key(qw(id));
 __PACKAGE__->belongs_to(
   code => 'AuthServer::Schema::Code' => { 'foreign.id' => 'self.code_id' } );
-__PACKAGE__->might_have( refresh_token => 'AuthServer::Schema::RefreshToken' =>
+__PACKAGE__->might_have(
+  refresh_token => 'AuthServer::Schema::RefreshToken' =>
     { 'foreign.access_token_id' => 'self.id' } );
 
 sub as_string  { shift->id }
@@ -34,8 +35,8 @@ __PACKAGE__->belongs_to( access_token => 'AuthServer::Schema::Token' =>
 
 sub as_string { shift->id }
 
-__PACKAGE__->belongs_to(
-  client => 'AuthServer::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
+__PACKAGE__->belongs_to( client => 'AuthServer::Schema::Client' =>
+    { 'foreign.id' => 'self.client_id' } );
 
 package AuthServer::Schema::Client;
 use parent 'DBIx::Class';
@@ -49,7 +50,8 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key('id');
 __PACKAGE__->has_many(
-  codes => 'AuthServer::Schema::Code' => { 'foreign.client_id' => 'self.id' } );
+  codes => 'AuthServer::Schema::Code' => { 'foreign.client_id' => 'self.id' }
+);
 __PACKAGE__->has_many( refresh_tokens => 'AuthServer::Schema::RefreshToken' =>
     { 'foreign.client_id' => 'self.id' } );
 
@@ -64,10 +66,11 @@ __PACKAGE__->add_columns(
   is_active => { is_nullable => 0, default_value => 1 }
 );
 __PACKAGE__->set_primary_key(qw(id));
-__PACKAGE__->belongs_to(
-  client => 'AuthServer::Schema::Client' => { 'foreign.id' => 'self.client_id' } );
+__PACKAGE__->belongs_to( client => 'AuthServer::Schema::Client' =>
+    { 'foreign.id' => 'self.client_id' } );
 __PACKAGE__->has_many(
-  tokens => 'AuthServer::Schema::Token' => { 'foreign.code_id' => 'self.id' } );
+  tokens => 'AuthServer::Schema::Token' => { 'foreign.code_id' => 'self.id' }
+);
 
 sub as_string { shift->id }
 
@@ -92,7 +95,8 @@ around COMPONENT => sub {
   my $self  = $class->$orig(@_);
   $self->schema->deploy;
   $self->schema->resultset('Client')
-    ->create( { endpoint => '/foo', access_secret => 'foosecret' } );
+    ->create(
+    { endpoint => 'http://localhost/auth', access_secret => 'foosecret' } );
   return $self;
 };
 

@@ -4,13 +4,25 @@ use MooseX::Types::Common::String qw(NonEmptySimpleStr);
 use LWP::UserAgent;
 use JSON::Any;
 
-has [qw(grant_uri token_uri client_id client_secret)] => (
+has [qw(grant_uri token_uri client_id)] => (
   is       => 'ro',
   isa      => NonEmptySimpleStr,
   required => 1,
 );
 
+has client_secret => (
+  is        => 'ro',
+  isa       => NonEmptySimpleStr,
+  required  => 0,
+  predicate => 'has_client_secret'
+);
+
 has ua => ( is => 'ro', default => sub { LWP::UserAgent->new } );
+
+sub BUILDARGS {
+  my ( $class, $config, $app, $realm ) = @_;
+  return $config;
+}
 
 sub authenticate {
   my ( $self, $ctx, $realm, $auth_info ) = @_;
@@ -22,7 +34,8 @@ sub authenticate {
 
     return;
   } else {
-    my $token = $self->request_access_token($callback_uri, $code, $auth_info);
+    my $token =
+      $self->request_access_token( $callback_uri, $code, $auth_info );
     die 'Error validating verification code' unless $token;
     return $realm->find_user( { token => $token->{access_token}, }, $ctx );
   }
@@ -56,13 +69,14 @@ sub request_access_token {
   my $query = {
     client_id    => $self->client_id,
     redirect_uri => $callback_uri,
-    code         => $code
+    code         => $code,
+    grant_type   => 'authorization_code'
   };
   $query->{state} = $auth_info->{state} if exists $auth_info->{state};
   $uri->query_form($query);
   my $response = $self->ua->get($uri);
   return unless $response->is_success;
-  return $j->jsonToObj($response->decoded_content);
+  return $j->jsonToObj( $response->decoded_content );
 }
 
 1;
