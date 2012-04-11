@@ -4,6 +4,33 @@ use MooseX::Types::Common::String qw(NonEmptySimpleStr);
 use LWP::UserAgent;
 use JSON::Any;
 
+=head1 NAME
+
+Catalyst::Authentication::Credential::OAuth2 - Authenticate against OAuth2 servers
+
+=head1 SYNOPSIS
+
+__PACKAGE__->config(
+  'Plugin::Authentication' => {
+    default => {
+      credential => {
+        class     => 'OAuth2',
+        grant_uri => 'http://authserver/request',
+        token_uri => 'http://authserver/token',
+        client_id => 'dead69beef'
+      },
+      store => { class => 'Null' }
+    }
+  }
+);
+
+=head1 DESCRIPTION
+
+This module implements authentication via OAuth2 credentials, giving you a
+user object which stores tokens for accessing protected resources.
+
+=cut
+
 has [qw(grant_uri token_uri client_id)] => (
   is       => 'ro',
   isa      => NonEmptySimpleStr,
