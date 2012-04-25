@@ -15,20 +15,22 @@ my $app      = sub {
   }
 };
 
-my $mech = LWP::UserAgent::Plack->new( app => $app );
+my $mech = $Catalyst::OAuth2::Client::UA =
+  LWP::UserAgent::Plack->new( app => $app );
+
 my $res = $mech->get('http://localhost/gold');
 
-is($res->content, '');
+is( $res->content, '' );
 
 $res = $mech->get('http://localhost/auth');
 
 is( $res->content, 'auth ok' );
 
 $res = $mech->get('http://localhost/lead');
-is( $res->content, 'ok' );
+is( $res->content, 'ok', 'fetch non-protected resource' );
 
 $res = $mech->get('http://localhost/gold');
-ok($res->is_success);
+ok( $res->is_success );
 is( $res->content, 'gold' );
 
 done_testing();

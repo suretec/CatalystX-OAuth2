@@ -3,6 +3,7 @@ use Moose;
 use MooseX::Types::Common::String qw(NonEmptySimpleStr);
 use LWP::UserAgent;
 use JSON::Any;
+use Moose::Util;
 
 =head1 NAME
 
@@ -48,6 +49,8 @@ has ua => ( is => 'ro', default => sub { LWP::UserAgent->new } );
 
 sub BUILDARGS {
   my ( $class, $config, $app, $realm ) = @_;
+  Moose::Util::ensure_all_roles( $realm, 'Catalyst::OAuth2::ClientInjector' );
+  Moose::Util::ensure_all_roles( $realm->store, 'Catalyst::OAuth2::ClientPersistor');
   return $config;
 }
 

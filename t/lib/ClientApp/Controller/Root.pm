@@ -1,6 +1,7 @@
 package ClientApp::Controller::Root;
 use Moose;
 use namespace::autoclean;
+use HTTP::Request;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -18,13 +19,10 @@ sub lead : Local Args(0) {
 
 sub gold : Local Args(0) {
   my ( $self, $c ) = @_;
-  my $ua = $c->get_auth_realm('default')->credential->ua;
-
-  my $req = HTTP::Request->new( GET => 'http://resourceserver/gold' );
-  my $token = '';
-  $token = $c->user->token if $c->user_exists;
-  $req->header( Authorization => 'Bearer ' . $token );
-  my $res = $ua->request($req);
+  return unless $c->user_exists;
+  my $res = $c->user->oauth2->request(
+    HTTP::Request->new( GET => 'http://resourceserver/gold' )
+  );
 
   $c->res->body( $res->content );
 }
