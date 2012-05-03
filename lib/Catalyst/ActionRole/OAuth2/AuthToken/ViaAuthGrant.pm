@@ -3,6 +3,37 @@ use Moose::Role;
 use Try::Tiny;
 use Catalyst::OAuth2::Request::AuthToken;
 
+# ABSTRACT: Authorization token provider endpoint for OAuth2 authentication flows
+
+=head1 SYNOPSIS
+
+    package AuthServer::Controller::OAuth2::Provider;
+    use Moose;
+
+    BEGIN { extends 'Catalyst::Controller::ActionRole' }
+
+    use URI;
+
+    with 'Catalyst::OAuth2::Controller::Role::Provider';
+
+    __PACKAGE__->config(
+      store => {
+        class => 'DBIC',
+        client_model => 'DB::Client'
+      }
+    );
+
+    sub token : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
+
+    1;
+
+=head1 DESCRIPTION
+
+This action role implements an endpoint that exchanges an authorization code
+for an access token.
+
+=cut
+
 with 'Catalyst::OAuth2::ActionRole::Token';
 
 sub build_oauth2_request {
