@@ -5,10 +5,10 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst' }
 
 use AuthServer;
-use LWP::UserAgent::Plack;
+use Test::WWW::Mechanize::PSGI;
 
 my $client = AuthServer->model('DB::Client')->first;
-my $ua = LWP::UserAgent::Plack->new( app => AuthServer->psgi_app );
+my $ua = Test::WWW::Mechanize::PSGI->new( app => AuthServer->psgi_app );
 
 __PACKAGE__->config(
   'Plugin::Authentication' => {

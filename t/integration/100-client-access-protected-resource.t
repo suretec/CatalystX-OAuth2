@@ -4,7 +4,7 @@ use lib 't/lib';
 use AuthServer;
 use ClientApp;
 
-#use LWP::UserAgent::Plack;
+use LWP::UserAgent::Plack;
 
 my $auth_app = AuthServer->psgi_app;
 my $main_app = ClientApp->psgi_app;
