@@ -1,6 +1,8 @@
 package CatalystX::OAuth2::Schema::Result::Code;
 use parent 'DBIx::Class';
 
+# ABSTRACT: A table for registering grant codes
+
 __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('code');
 __PACKAGE__->add_columns(

@@ -1,6 +1,8 @@
 package CatalystX::OAuth2::Schema::Result::Client;
 use parent 'DBIx::Class';
 
+# ABSTRACT: A table for registering clients
+
 __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('client');
 __PACKAGE__->add_columns(

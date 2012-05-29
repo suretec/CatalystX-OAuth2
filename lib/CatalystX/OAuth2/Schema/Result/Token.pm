@@ -1,6 +1,8 @@
 package CatalystX::OAuth2::Schema::Result::Token;
 use parent 'DBIx::Class';
 
+# ABSTRACT: A table for registering bearer tokens
+
 __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('token');
 __PACKAGE__->add_columns(

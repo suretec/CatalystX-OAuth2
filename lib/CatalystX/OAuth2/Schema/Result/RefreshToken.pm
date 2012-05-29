@@ -1,6 +1,8 @@
 package CatalystX::OAuth2::Schema::Result::RefreshToken;
 use parent 'DBIx::Class';
 
+# ABSTRACT: A table for registering refresh tokens
+
 __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('refresh_token');
 __PACKAGE__->add_columns(
