@@ -25,7 +25,12 @@ __PACKAGE__->config(
   }
 );
 
-__PACKAGE__->setup(
-  qw(Authentication Session Session::State::Cookie Session::Store::Dummy));
+__PACKAGE__->setup(qw(
+  ConfigLoader
+  Authentication
+  Session
+  Session::State::Cookie
+  Session::Store::Dummy
+));
 
 1;
