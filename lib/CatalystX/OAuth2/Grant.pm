@@ -1,7 +1,7 @@
-package Catalyst::OAuth2::Grant;
+package CatalystX::OAuth2::Grant;
 use Moose::Role;
 
-with 'Catalyst::OAuth2';
+with 'CatalystX::OAuth2';
 
 # ABSTRACT: A role for building oauth2 grant objects
 

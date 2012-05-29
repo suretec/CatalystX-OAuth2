@@ -1,4 +1,4 @@
-package Catalyst::OAuth2::Client;
+package CatalystX::OAuth2::Client;
 use Moose;
 use LWP::UserAgent;
 

@@ -1,9 +1,9 @@
-package Catalyst::OAuth2::Request::RequestAuth;
+package CatalystX::OAuth2::Request::RequestAuth;
 use Moose;
 
 # ABSTRACT: Role for the initial request in the oauth2 flow
 
-with 'Catalyst::OAuth2::Grant';
+with 'CatalystX::OAuth2::Grant';
 
 has access_secret =>
   ( isa => 'Str', is => 'ro', predicate => 'has_access_secret' );

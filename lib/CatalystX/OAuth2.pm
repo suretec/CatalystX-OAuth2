@@ -1,4 +1,4 @@
-package Catalyst::OAuth2;
+package CatalystX::OAuth2;
 use Moose::Role;
 
 # ABSTRACT: OAuth2 services for Catalyst
@@ -9,7 +9,7 @@ use Moose::Role;
     use Moose;
     BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
-    with 'Catalyst::OAuth2::Controller::Role::Provider';
+    with 'CatalystX::OAuth2::Controller::Role::Provider';
 
     __PACKAGE__->config(
       store => {
@@ -118,7 +118,7 @@ has redirect_uri  => ( is => 'ro', required => 1 );
 
 has store => (
   is        => 'rw',
-  does      => 'Catalyst::OAuth2::Store',
+  does      => 'CatalystX::OAuth2::Store',
   init_arg  => undef,
   predicate => 'has_store'
 );

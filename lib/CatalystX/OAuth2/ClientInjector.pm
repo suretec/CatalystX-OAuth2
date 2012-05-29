@@ -1,8 +1,8 @@
-package Catalyst::OAuth2::ClientInjector;
+package CatalystX::OAuth2::ClientInjector;
 use Moose::Role;
 use Scalar::Util     ();
 use MooseX::NonMoose ();
-use Catalyst::OAuth2::Client;
+use CatalystX::OAuth2::Client;
 
 # ABSTRACT: A role for automatically providing an oauth2 client to authenticated user objects
 
@@ -49,7 +49,7 @@ sub _apply_client_role {
   if ( UNIVERSAL::isa( 'Moose::Object', $user ) or !$user->can('oauth2') ) {
     Moose::Util::ensure_all_roles(
       $user,
-      'Catalyst::OAuth2::ClientContainer',
+      'CatalystX::OAuth2::ClientContainer',
       { rebless_params => { oauth2 => $oauth2 } }
     );
   } else {
@@ -59,7 +59,7 @@ sub _apply_client_role {
 
 sub _build_oauth2_client {
   my ( $self, $token ) = @_;
-  return Catalyst::OAuth2::Client->new( token => $token );
+  return CatalystX::OAuth2::Client->new( token => $token );
 }
 
 1;

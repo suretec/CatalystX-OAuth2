@@ -1,7 +1,7 @@
 package Catalyst::ActionRole::OAuth2::AuthToken::ViaRefreshToken;
 use Moose::Role;
 use Try::Tiny;
-use Catalyst::OAuth2::Request::RefreshToken;
+use CatalystX::OAuth2::Request::RefreshToken;
 
 # ABSTRACT: Authorization token refresh provider endpoint for OAuth2 authentication flows
 
@@ -14,7 +14,7 @@ use Catalyst::OAuth2::Request::RefreshToken;
 
     use URI;
 
-    with 'Catalyst::OAuth2::Controller::Role::Provider';
+    with 'CatalystX::OAuth2::Controller::Role::Provider';
 
     __PACKAGE__->config(
       store => {
@@ -34,7 +34,7 @@ access token.
 
 =cut
 
-with 'Catalyst::OAuth2::ActionRole::Token';
+with 'CatalystX::OAuth2::ActionRole::Token';
 
 sub build_oauth2_request {
   my ( $self, $controller, $c ) = @_;
@@ -43,7 +43,7 @@ sub build_oauth2_request {
   my $req;
 
   try {
-    $req = Catalyst::OAuth2::Request::RefreshToken->new(
+    $req = CatalystX::OAuth2::Request::RefreshToken->new(
       %{ $c->req->query_parameters } );
     $req->store($store);
   }

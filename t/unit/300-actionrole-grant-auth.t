@@ -27,10 +27,10 @@ my $code = AuthServer->model('DB::Code')
   is( $c->res->body, undef, q{doesn't produce warning} );
   ok( $c->req->can('oauth2'),
     "installs oauth2 accessors if request is valid" );
-  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( Moose::Util::does_role( $c->req, 'CatalystX::OAuth2::Request' ) );
   my $res      = $c->res;
   my $client   = $c->controller->store->find_client(1);
-  isa_ok(my $oauth2 = $c->req->oauth2, 'Catalyst::OAuth2::Request::GrantAuth');
+  isa_ok(my $oauth2 = $c->req->oauth2, 'CatalystX::OAuth2::Request::GrantAuth');
   my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c );
   is_deeply( { $redirect->query_form },
     { code => $code->as_string, state => 'bar' } );

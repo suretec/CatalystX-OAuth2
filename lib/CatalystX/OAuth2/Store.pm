@@ -1,4 +1,4 @@
-package Catalyst::OAuth2::Store;
+package CatalystX::OAuth2::Store;
 use Moose::Role;
 
 # ABSTRACT: The API for oauth2 stores

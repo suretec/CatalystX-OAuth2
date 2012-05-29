@@ -2,7 +2,7 @@ package Catalyst::ActionRole::OAuth2::RequestAuth;
 use Moose::Role;
 use Try::Tiny;
 use URI;
-use Catalyst::OAuth2::Request::RequestAuth;
+use CatalystX::OAuth2::Request::RequestAuth;
 
 # ABSTRACT: Authorization grant endpoint for OAuth2 authentication flows
 
@@ -12,7 +12,7 @@ use Catalyst::OAuth2::Request::RequestAuth;
     use Moose;
     BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
-    with 'Catalyst::OAuth2::Controller::Role::Provider';
+    with 'CatalystX::OAuth2::Controller::Role::Provider';
 
     __PACKAGE__->config(
       store => {
@@ -34,7 +34,7 @@ potentially unsafe front-end forms for user confirmation of the authorization.
 
 =cut
 
-with 'Catalyst::OAuth2::ActionRole::Grant';
+with 'CatalystX::OAuth2::ActionRole::Grant';
 
 has enable_access_secret => ( isa => 'Bool', is => 'ro', default => 0 );
 
@@ -44,7 +44,7 @@ sub build_oauth2_request {
   my $store = $controller->store;
   my $req;
   try {
-    $req = Catalyst::OAuth2::Request::RequestAuth->new(
+    $req = CatalystX::OAuth2::Request::RequestAuth->new(
       %{ $c->req->query_parameters } );
     $req->enable_access_secret($self->enable_access_secret);
     $req->store($store);

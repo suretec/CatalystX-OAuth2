@@ -3,7 +3,7 @@ use Moose;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
-with 'Catalyst::OAuth2::Controller::Role::WithStore';
+with 'CatalystX::OAuth2::Controller::Role::WithStore';
 
 __PACKAGE__->config(
   store => {

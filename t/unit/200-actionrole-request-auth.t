@@ -17,7 +17,7 @@ my $mock = mock_context('AuthServer');
   my $c = $mock->( GET '/request' );
   ok( !$c->req->can('oauth2'),
     "doesn't install oauth2 accessors before the dispatch" );
-  ok( !Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( !Moose::Util::does_role( $c->req, 'CatalystX::OAuth2::Request' ) );
   $c->dispatch;
   is(
     $c->res->body,
@@ -27,7 +27,7 @@ my $mock = mock_context('AuthServer');
   is_deeply( $c->error, [], 'dispatches to request action cleanly' );
   ok( !$c->req->can('oauth2'),
     "doesn't install oauth2 accessors if request isn't valid" );
-  ok( !Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( !Moose::Util::does_role( $c->req, 'CatalystX::OAuth2::Request' ) );
 }
 
 {
@@ -46,7 +46,7 @@ my $mock = mock_context('AuthServer');
   is( $c->res->body, undef, q{doesn't produce warning} );
   ok( $c->req->can('oauth2'),
     "installs oauth2 accessors if request is valid" );
-  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( Moose::Util::does_role( $c->req, 'CatalystX::OAuth2::Request' ) );
   my $res    = $c->res;
   my $client = $c->controller->store->find_client(1);
   ok( my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c ) );
@@ -75,7 +75,7 @@ my $mock = mock_context('AuthServer');
   is( $c->res->body, undef, q{doesn't produce warning} );
   ok( $c->req->can('oauth2'),
     "installs oauth2 accessors if request is valid" );
-  ok( Moose::Util::does_role( $c->req, 'Catalyst::OAuth2::Request' ) );
+  ok( Moose::Util::does_role( $c->req, 'CatalystX::OAuth2::Request' ) );
   my $res    = $c->res;
   my $client = $c->controller->store->find_client(1);
   ok( my $redirect = $c->req->oauth2->next_action_uri( $c->controller, $c ) );

@@ -43,7 +43,7 @@ my $mock = mock_context('ClientApp');
     ClientApp => $realm
   );
   is_deeply( [ map { $_->name } $realm->meta->calculate_all_roles ],
-    [qw(Catalyst::OAuth2::ClientInjector)] );
+    [qw(CatalystX::OAuth2::ClientInjector)] );
 
   ok( !$cred->authenticate( $c, $realm, {} ) );
 
@@ -99,12 +99,12 @@ my $j = JSON::Any->new;
     ClientApp => $realm
   );
   is_deeply( [ map { $_->name } $realm->meta->calculate_all_roles ],
-    [qw(Catalyst::OAuth2::ClientInjector)] );
+    [qw(CatalystX::OAuth2::ClientInjector)] );
 
   ok( my $oauth2_user = $cred->authenticate( $c, $realm, {} ) );
   is_deeply( [ map { $_->name } $user->meta->calculate_all_roles ],
-    [qw(Catalyst::OAuth2::ClientContainer)] );
-  isa_ok( $oauth2_user->oauth2, 'Catalyst::OAuth2::Client' );
+    [qw(CatalystX::OAuth2::ClientContainer)] );
+  isa_ok( $oauth2_user->oauth2, 'CatalystX::OAuth2::Client' );
   is( $oauth2_user->oauth2->token, $tok_data->{access_token} );
 
   {

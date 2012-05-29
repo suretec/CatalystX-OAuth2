@@ -5,7 +5,7 @@ BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
 use URI;
 
-with 'Catalyst::OAuth2::Controller::Role::Provider';
+with 'CatalystX::OAuth2::Controller::Role::Provider';
 
 __PACKAGE__->config(
   store => {

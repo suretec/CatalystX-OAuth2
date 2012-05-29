@@ -18,7 +18,7 @@ use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
 
-with 'Catalyst::OAuth2::Controller::Role::Provider';
+with 'CatalystX::OAuth2::Controller::Role::Provider';
 
 around check_provider_actions => sub {
   die qq{yo, I'm dead dawg};

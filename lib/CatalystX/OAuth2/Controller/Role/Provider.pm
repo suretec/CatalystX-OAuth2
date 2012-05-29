@@ -1,4 +1,4 @@
-package Catalyst::OAuth2::Controller::Role::Provider;
+package CatalystX::OAuth2::Controller::Role::Provider;
 use Moose::Role;
 use MooseX::SetOnce;
 use Moose::Util;
@@ -6,7 +6,7 @@ use Class::Load;
 
 # ABSTRACT: A role for writing oauth2 provider controllers
 
-with 'Catalyst::OAuth2::Controller::Role::WithStore';
+with 'CatalystX::OAuth2::Controller::Role::WithStore';
 
 has $_ => (
   isa       => 'Catalyst::Action',

@@ -1,10 +1,10 @@
-package Catalyst::OAuth2::Store::DBIC;
+package CatalystX::OAuth2::Store::DBIC;
 use Moose;
 use Moose::Util::TypeConstraints;
 
 # ABSTRACT: An interface to a DBIC-based OAuth2 store
 
-with 'Catalyst::OAuth2::Store';
+with 'CatalystX::OAuth2::Store';
 
 has app => ( is => 'ro', required => 1 );
 has client_model => (

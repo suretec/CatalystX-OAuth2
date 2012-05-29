@@ -47,8 +47,8 @@ has ua => ( is => 'ro', default => sub { LWP::UserAgent->new } );
 
 sub BUILDARGS {
   my ( $class, $config, $app, $realm ) = @_;
-  Moose::Util::ensure_all_roles( $realm, 'Catalyst::OAuth2::ClientInjector' );
-  Moose::Util::ensure_all_roles( $realm->store, 'Catalyst::OAuth2::ClientPersistor');
+  Moose::Util::ensure_all_roles( $realm, 'CatalystX::OAuth2::ClientInjector' );
+  Moose::Util::ensure_all_roles( $realm->store, 'CatalystX::OAuth2::ClientPersistor');
   return $config;
 }
 

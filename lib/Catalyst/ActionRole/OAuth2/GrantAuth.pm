@@ -1,7 +1,7 @@
 package Catalyst::ActionRole::OAuth2::GrantAuth;
 use Moose::Role;
 use Try::Tiny;
-use Catalyst::OAuth2::Request::GrantAuth;
+use CatalystX::OAuth2::Request::GrantAuth;
 
 # ABSTRACT: Authorization grant endpoint for OAuth2 authentication flows
 
@@ -11,7 +11,7 @@ use Catalyst::OAuth2::Request::GrantAuth;
     use Moose;
     BEGIN { extends 'Catalyst::Controller::ActionRole' }
 
-    with 'Catalyst::OAuth2::Controller::Role::Provider';
+    with 'CatalystX::OAuth2::Controller::Role::Provider';
 
     __PACKAGE__->config(
       store => {
@@ -40,7 +40,7 @@ the end of the request, in order for the authorization flow to be continued.
 
 =cut
 
-with 'Catalyst::OAuth2::ActionRole::Grant';
+with 'CatalystX::OAuth2::ActionRole::Grant';
 
 sub build_oauth2_request {
   my ( $self, $controller, $c ) = @_;
@@ -49,7 +49,7 @@ sub build_oauth2_request {
   my $req;
 
   try {
-    $req = Catalyst::OAuth2::Request::GrantAuth->new(
+    $req = CatalystX::OAuth2::Request::GrantAuth->new(
       %{ $c->req->query_parameters } );
     $req->store($store);
   }

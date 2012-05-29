@@ -4,7 +4,7 @@ use lib 't/lib';
 use AuthServer;
 use ClientApp;
 
-use LWP::UserAgent::Plack;
+use Test::WWW::Mechanize::PSGI;
 
 my $auth_app = AuthServer->psgi_app;
 my $main_app = ClientApp->psgi_app;
@@ -15,8 +15,8 @@ my $app      = sub {
   }
 };
 
-my $mech = $Catalyst::OAuth2::Client::UA =
-  LWP::UserAgent::Plack->new( app => $app );
+my $mech = $CatalystX::OAuth2::Client::UA =
+  Test::WWW::Mechanize::PSGI->new( app => $app );
 
 my $res = $mech->get('http://localhost/gold');
 
