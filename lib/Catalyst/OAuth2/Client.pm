@@ -2,6 +2,8 @@ package Catalyst::OAuth2::Client;
 use Moose;
 use LWP::UserAgent;
 
+# ABSTRACT: An http client for requesting oauth2-protected resources using a token
+
 our $UA;
 
 has token => ( isa => 'Str', is => 'rw', required => 1 );

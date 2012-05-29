@@ -4,6 +4,8 @@ use MooseX::SetOnce;
 use Moose::Util;
 use Class::Load;
 
+# ABSTRACT: A role for writing oauth2 provider controllers
+
 with 'Catalyst::OAuth2::Controller::Role::WithStore';
 
 has $_ => (

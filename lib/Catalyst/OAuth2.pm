@@ -93,7 +93,7 @@ if he wishes to effectively grant the authorization to the requesting
 client/app. The user-agent is redirected automatically to the correct endpoint
 if the authorization is granted.
 
-=item C and D - L<Catalyst::ActionRole::OAuth2::AuthToken::ViaAuthGrant
+=item C and D - L<Catalyst::ActionRole::OAuth2::AuthToken::ViaAuthGrant>
 
 Required
 

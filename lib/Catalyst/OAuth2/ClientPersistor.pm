@@ -1,6 +1,8 @@
 package Catalyst::OAuth2::ClientPersistor;
 use Moose::Role;
 
+# ABSTRACT: Work-around for persisting oauth2-authenticated users safely
+
 requires qw(for_session);
 
 after for_session => sub {

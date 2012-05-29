@@ -2,6 +2,8 @@ package Catalyst::OAuth2::ActionRole::RequestInjector;
 use Moose::Role;
 use Moose::Util;
 
+# ABSTRACT: A role for injecting oauth2 logic into a catalyst request object
+
 use Catalyst::OAuth2::Request;
 
 requires 'execute';

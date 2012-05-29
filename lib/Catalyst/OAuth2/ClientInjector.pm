@@ -4,6 +4,8 @@ use Scalar::Util     ();
 use MooseX::NonMoose ();
 use Catalyst::OAuth2::Client;
 
+# ABSTRACT: A role for automatically providing an oauth2 client to authenticated user objects
+
 requires qw(find_user restore_user persist_user);
 
 around 'find_user' => sub {

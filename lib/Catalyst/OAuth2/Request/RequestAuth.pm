@@ -1,6 +1,8 @@
 package Catalyst::OAuth2::Request::RequestAuth;
 use Moose;
 
+# ABSTRACT: Role for the initial request in the oauth2 flow
+
 with 'Catalyst::OAuth2::Grant';
 
 has access_secret =>

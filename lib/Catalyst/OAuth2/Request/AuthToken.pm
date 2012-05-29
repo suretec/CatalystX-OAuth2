@@ -1,7 +1,10 @@
 package Catalyst::OAuth2::Request::AuthToken;
 use Moose;
 use URI;
+
 with 'Catalyst::OAuth2';
+
+# ABSTRACT: An oauth2 authentication token implementation
 
 has grant_type => ( is => 'ro', required => 1 );
 has code  => ( is => 'ro', required => 1 );

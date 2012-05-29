@@ -2,6 +2,8 @@ package Catalyst::OAuth2::Request::GrantAuth;
 use Moose;
 use URI;
 
+# ABSTRACT: A role for building oauth2 grant requests
+
 with 'Catalyst::OAuth2::Grant';
 
 has user_is_valid => (isa => 'Bool', is => 'rw', default => 0);

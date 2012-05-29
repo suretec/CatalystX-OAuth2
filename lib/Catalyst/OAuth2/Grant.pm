@@ -3,6 +3,8 @@ use Moose::Role;
 
 with 'Catalyst::OAuth2';
 
+# ABSTRACT: A role for building oauth2 grant objects
+
 requires 'next_action_uri';
 
 has response_type => ( is => 'ro', required  => 1 );

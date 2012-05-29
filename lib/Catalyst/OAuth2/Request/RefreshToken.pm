@@ -3,6 +3,8 @@ use Moose;
 use URI;
 with 'Catalyst::OAuth2';
 
+# ABSTRACT: The oauth2 refresh token
+
 has grant_type    => ( is => 'ro', required => 1 );
 has refresh_token => ( is => 'ro', required => 1 );
 

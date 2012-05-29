@@ -5,9 +5,7 @@ use LWP::UserAgent;
 use JSON::Any;
 use Moose::Util;
 
-=head1 NAME
-
-Catalyst::Authentication::Credential::OAuth2 - Authenticate against OAuth2 servers
+# ABSTRACT: Authenticate against OAuth2 servers
 
 =head1 SYNOPSIS
 

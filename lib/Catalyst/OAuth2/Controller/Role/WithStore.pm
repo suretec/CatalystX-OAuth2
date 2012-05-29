@@ -1,6 +1,8 @@
 package Catalyst::OAuth2::Controller::Role::WithStore;
 use Moose::Role;
 
+# ABSTRACT: A role for providing oauth2 stores to controllers
+
 has store => (
   does     => 'Catalyst::OAuth2::Store',
   is       => 'ro',

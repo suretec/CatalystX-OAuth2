@@ -1,6 +1,8 @@
 package Catalyst::OAuth2::ActionRole::Grant;
 use Moose::Role;
 
+# ABSTRACT: Integrate an action with an oauth2 request
+
 with 'Catalyst::OAuth2::ActionRole::RequestInjector';
 
 after execute => sub {
