@@ -13,6 +13,7 @@ around 'find_user' => sub {
   my $self = shift;
   my ( $authinfo, $c ) = @_;
   my $user = $self->$orig(@_);
+  my $token = $authinfo->{token} or return;
   $self->_apply_client_role( $user, $authinfo->{token} );
   return $user;
 };
