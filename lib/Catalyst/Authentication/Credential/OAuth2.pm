@@ -9,19 +9,19 @@ use Moose::Util;
 
 =head1 SYNOPSIS
 
-__PACKAGE__->config(
-  'Plugin::Authentication' => {
-    default => {
-      credential => {
-        class     => 'OAuth2',
-        grant_uri => 'http://authserver/request',
-        token_uri => 'http://authserver/token',
-        client_id => 'dead69beef'
-      },
-      store => { class => 'Null' }
-    }
-  }
-);
+    __PACKAGE__->config(
+      'Plugin::Authentication' => {
+        default => {
+          credential => {
+            class     => 'OAuth2',
+            grant_uri => 'http://authserver/request',
+            token_uri => 'http://authserver/token',
+            client_id => 'dead69beef'
+          },
+          store => { class => 'Null' }
+        }
+      }
+    );
 
 =head1 DESCRIPTION
 
