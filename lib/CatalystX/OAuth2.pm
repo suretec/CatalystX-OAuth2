@@ -156,6 +156,12 @@ The entity representing the client in your schema
 
 =back
 
+=head1 SPONSORSHIP
+
+This module exists due to the wonderful people at Suretec Systems
+Ltd. <http://www.suretecsystems.com/> who sponsored it's development for its
+VoIP division called SureVoIP <http://www.surevoip.co.uk/>
+
 =cut
 
 1;
