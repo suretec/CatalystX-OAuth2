@@ -12,7 +12,7 @@ __PACKAGE__->config(
     class        => 'DBIC',
     client_model => 'DB::Client'
   },
-  action => { request => { enable_access_secret => 1 } }
+  action => { request => { enable_client_secret => 1 } }
 );
 
 sub base : Chained('/') PathPart('secret') CaptureArgs(0) {}

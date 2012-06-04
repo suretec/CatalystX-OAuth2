@@ -18,7 +18,7 @@ around COMPONENT => sub {
   $self->schema->deploy;
   $self->schema->resultset('Client')
     ->create(
-    { endpoint => $self->user_endpoint, access_secret => 'foosecret' } );
+    { endpoint => $self->user_endpoint, client_secret => 'foosecret' } );
   return $self;
 };
 
