@@ -120,10 +120,10 @@ sub find_code_from_refresh {
   return $refresh_row->client->codes->search( { is_active => 1 } )->first;
 }
 
-sub verify_access_secret {
+sub verify_client_secret {
   my ( $self, $client_id, $access_secret ) = @_;
   my $client = $self->find_client($client_id);
-  return $client->access_secret eq $access_secret;
+  return $client->client_secret eq $access_secret;
 }
 
 sub verify_client_token {
