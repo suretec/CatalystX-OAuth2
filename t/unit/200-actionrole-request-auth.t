@@ -24,6 +24,7 @@ my $mock = mock_context('AuthServer');
     'warning: response_type/client_id invalid or missing',
     'displays warning to resource owner'
   );
+  like($c->log->_body, qr/\[error\] Attribute \(response_type\) is required/);
   is_deeply( $c->error, [], 'dispatches to request action cleanly' );
   ok( !$c->req->can('oauth2'),
     "doesn't install oauth2 accessors if request isn't valid" );

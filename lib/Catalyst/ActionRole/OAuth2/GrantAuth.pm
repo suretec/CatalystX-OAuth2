@@ -54,6 +54,7 @@ sub build_oauth2_request {
     $req->store($store);
   }
   catch {
+    $c->log->error($_);
     # need to figure out a better way, but this will do for now
     $c->res->body('warning: response_type/client_id invalid or missing');
 
