@@ -54,7 +54,7 @@ sub _build_query_parameters {
     or return {
     error => 'invalid_request',
     error_description =>
-      'redirection_uri does not match the registerd client endpoint'
+      'redirection_uri does not match the registered client endpoint'
     };
 
   $q{redirect_uri} = $self->redirect_uri;
