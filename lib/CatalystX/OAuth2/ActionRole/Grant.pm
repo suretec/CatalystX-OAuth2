@@ -7,6 +7,7 @@ with 'CatalystX::OAuth2::ActionRole::RequestInjector';
 
 after execute => sub {
   my($self, $controller, $c) = @_;
+  return unless $c->req->oauth2->has_approval;
   my $uri = $c->req->oauth2->next_action_uri($controller, $c);
   $c->res->redirect($uri);
 };

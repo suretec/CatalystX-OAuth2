@@ -47,7 +47,6 @@ sub build_oauth2_request {
 
   my $store = $controller->store;
   my $req;
-
   try {
     $req = CatalystX::OAuth2::Request::GrantAuth->new(
       %{ $c->req->query_parameters } );

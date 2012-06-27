@@ -1,0 +1,23 @@
+=head1 NAME
+
+CatalystX::OAuth2::Tutorial - CatalystX::OAuth2: Overview
+
+=head1 DESCRIPTION
+
+L<CatalystX::OAuth2> is an oauth2 toolkit for L<Catalyst> implementing a
+subset of the L<oauth 2 ietf spec
+draft|http://tools.ietf.org/html/draft-ietf-oauth-v2-23>. The goal of this
+document is to provide a fast introduction and familiarization with the tools
+included.
+
+The tutorial is divided into the following sections:
+
+=over 4
+
+=item 1
+
+L<Introduction|CatalystX::OAuth2>
+
+=back
+
+=cut

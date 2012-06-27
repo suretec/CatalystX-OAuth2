@@ -1,4 +1,4 @@
-package AuthServer::Controller::OAuth2::Provider;
+package AuthServer::Controller::OAuth2::ProviderWithRefresh;
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole' }
@@ -14,9 +14,11 @@ __PACKAGE__->config(
   }
 );
 
-sub request : Chained('/') Args(0) Does('OAuth2::RequestAuth') {}
+sub base :Chained('/') PathPart('withrefresh') {}
 
-sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
+sub request : Chained('base') Args(0) Does('OAuth2::RequestAuth') {}
+
+sub grant : Chained('base') Args(0) Does('OAuth2::GrantAuth') {
   my ( $self, $c ) = @_;
 
   my $oauth2 = $c->req->oauth2;
@@ -27,9 +29,8 @@ sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
   $oauth2->approved(1) if $c->req->query_parameters->{approved};
 }
 
-sub token : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
+sub token : Chained('base') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
 
-sub refresh : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaRefreshToken') {}
-
+sub refresh : Chained('base') Args(0) Does('OAuth2::AuthToken::ViaRefreshToken') {}
 
 1;

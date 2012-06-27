@@ -1,4 +1,4 @@
-package AuthServer::Controller::OAuth2::Provider;
+package AuthServer::Controller::OAuth2::ProviderWithRefresh;
 use Moose;
 
 BEGIN { extends 'Catalyst::Controller::ActionRole' }
@@ -23,13 +23,10 @@ sub grant : Chained('/') Args(0) Does('OAuth2::GrantAuth') {
 
   $c->user_exists and $oauth2->user_is_valid(1)
     or $c->detach('/passthrulogin');
-
-  $oauth2->approved(1) if $c->req->query_parameters->{approved};
 }
 
 sub token : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
 
 sub refresh : Chained('/') Args(0) Does('OAuth2::AuthToken::ViaRefreshToken') {}
-
 
 1;

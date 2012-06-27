@@ -85,7 +85,7 @@ sub client_code_is_active {
 }
 
 sub create_access_token {
-  my ( $self, $code ) = @_;
+  my ( $self, $code, $with_refresh ) = @_;
   my $code_row = $self->find_client_code($code)
     or return;
   return $code_row->related_resultset( $self->token_relation )->create( {} );
@@ -93,31 +93,16 @@ sub create_access_token {
 
 sub create_access_token_from_refresh {
   my ( $self, $refresh ) = @_;
-  my $refresh_row =
-    $self->_client_model->related_resultset( $self->refresh_relation )
-    ->find($refresh)
+  my $refresh_row = $self->_client_model->find_refresh($refresh)
     or return;
-  my $code_row =
-    $refresh_row->client->codes->search( { is_active => 1 } )->first
-    or return;
-  my $token;
-  $code_row->result_source->storage->txn_do(
-    sub {
-      $token =
-        $code_row->related_resultset( $self->token_relation )->create( {} );
-      $refresh_row->update( { is_active => 0, access_token => $token } );
-    }
-  );
-  return $token;
+  return $refresh_row->create_access_token;
 }
 
 sub find_code_from_refresh {
   my ( $self, $refresh ) = @_;
-  my $refresh_row =
-    $self->_client_model->related_resultset( $self->refresh_relation )
-    ->find($refresh)
+  my $refresh_row = $self->_client_model->find_refresh($refresh)
     or return;
-  return $refresh_row->client->codes->search( { is_active => 1 } )->first;
+  return $refresh_row->code;
 }
 
 sub verify_client_secret {

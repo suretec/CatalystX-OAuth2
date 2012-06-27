@@ -14,6 +14,9 @@ around _params => sub {
   return $orig->(@_), qw(client_secret)
 };
 
+# cargo-culted, a small refactor of the action roles should remove the need to do this
+sub has_approval { 1 }
+
 sub _build_query_parameters {
   my ($self) = @_;
 

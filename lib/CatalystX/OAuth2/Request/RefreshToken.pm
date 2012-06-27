@@ -23,7 +23,8 @@ sub _build_query_parameters {
     };
 
   my $token =
-    $self->store->create_access_token_from_refresh( $self->refresh_token );
+    $self->store->create_access_token_from_refresh( $self->refresh_token )
+    or return { error => '' };
   return {
     access_token => $token->as_string,
     token_type   => $token->type,
