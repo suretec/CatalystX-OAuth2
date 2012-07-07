@@ -9,14 +9,16 @@ with 'CatalystX::OAuth2::Controller::Role::Provider';
 
 __PACKAGE__->config(
   store => {
-    class => 'DBIC',
+    class        => 'DBIC',
     client_model => 'DB::Client'
   }
 );
 
-sub base :Chained('/') PathPart('withrefresh') {}
+sub base : Chained('/') PathPart('withrefresh') CaptureArgs(0) {
+}
 
-sub request : Chained('base') Args(0) Does('OAuth2::RequestAuth') {}
+sub request : Chained('base') Args(0) Does('OAuth2::RequestAuth') {
+}
 
 sub grant : Chained('base') Args(0) Does('OAuth2::GrantAuth') {
   my ( $self, $c ) = @_;
@@ -29,8 +31,12 @@ sub grant : Chained('base') Args(0) Does('OAuth2::GrantAuth') {
   $oauth2->approved(1) if $c->req->query_parameters->{approved};
 }
 
-sub token : Chained('base') Args(0) Does('OAuth2::AuthToken::ViaAuthGrant') {}
+sub token : Chained('base') Args(0) Refresh
+  Does('OAuth2::AuthToken::ViaAuthGrant') {
+}
 
-sub refresh : Chained('base') Args(0) Does('OAuth2::AuthToken::ViaRefreshToken') {}
+sub refresh : Chained('base') Args(0)
+  Does('OAuth2::AuthToken::ViaRefreshToken') {
+}
 
 1;

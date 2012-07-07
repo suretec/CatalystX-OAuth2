@@ -46,9 +46,11 @@ sub build_oauth2_request {
     $req = CatalystX::OAuth2::Request::AuthToken->new(
       %{ $c->req->query_parameters } );
     $req->store($store);
+    $req->refresh_token(exists $self->attributes->{Refresh});
   }
   catch {
     $c->log->error($_);
+
     # need to figure out a better way, but this will do for now
     $c->res->body('warning: response_type/client_id invalid or missing');
 

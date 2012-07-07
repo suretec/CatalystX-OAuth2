@@ -9,8 +9,8 @@ with 'CatalystX::OAuth2::ActionRole::RequestInjector';
 my $json = JSON::Any->new;
 
 after execute => sub {
-  my($self, $controller, $c) = @_;
-  $c->res->body($json->objToJson($c->req->oauth2->query_parameters));
+  my ( $self, $controller, $c ) = @_;
+  $c->res->body( $json->objToJson( $c->req->oauth2->query_parameters ) );
 };
 
 1;

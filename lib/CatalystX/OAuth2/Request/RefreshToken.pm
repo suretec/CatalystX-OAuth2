@@ -6,7 +6,7 @@ with 'CatalystX::OAuth2';
 # ABSTRACT: The oauth2 refresh token
 
 has grant_type    => ( is => 'ro', required => 1 );
-has refresh_token => ( is => 'ro', required => 1 );
+has refresh_token => ( is       => 'ro' );
 
 around _params => sub { shift->(@_), qw(grant_type refresh_token) };
 
@@ -24,7 +24,7 @@ sub _build_query_parameters {
 
   my $token =
     $self->store->create_access_token_from_refresh( $self->refresh_token )
-    or return { error => '' };
+    or return { error => 'internal_error' };
   return {
     access_token => $token->as_string,
     token_type   => $token->type,

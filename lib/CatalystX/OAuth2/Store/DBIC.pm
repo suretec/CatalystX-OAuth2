@@ -88,7 +88,16 @@ sub create_access_token {
   my ( $self, $code, $with_refresh ) = @_;
   my $code_row = $self->find_client_code($code)
     or return;
-  return $code_row->related_resultset( $self->token_relation )->create( {} );
+  return $code_row->related_resultset( $self->token_relation )->create( {} )
+    unless $with_refresh;
+  my $token;
+  $code_row->result_source->storage->dbh_do(
+    sub {
+      my $refresh = $code_row->related_resultset( $self->refresh_relation )->create( {} );
+      $token = $refresh->create_access_token;
+    }
+  );
+  return $token;
 }
 
 sub create_access_token_from_refresh {

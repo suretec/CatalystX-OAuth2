@@ -37,8 +37,8 @@ __PACKAGE__->has_many(
 __PACKAGE__->many_to_many(
   to_refresh_token_map_m2m => to_refresh_token_map => 'refresh_token' );
 
-sub from_refresh_token { shift->from_access_token_map_m2m->first }
-sub to_refresh_token   { shift->to_access_token_map_m2m->first }
+sub from_refresh_token { shift->from_refresh_token_map_m2m->first }
+sub to_refresh_token   { shift->to_refresh_token_map_m2m->first }
 
 sub as_string  { shift->id }
 sub type       {'bearer'}

@@ -15,9 +15,8 @@ __PACKAGE__->has_many( codes => 'CatalystX::OAuth2::Schema::Result::Code' =>
     { 'foreign.client_id' => 'self.id' } );
 
 sub find_refresh {
-  shift->codes->search( { is_active => 1 } )->related_resultset('tokens')
-    ->related_resultset('to_refresh_token_map')
-    ->related_resultset('refresh_token')->find(@_);
+  shift->codes->search( { is_active => 1 } )
+    ->related_resultset('refresh_tokens')->find(@_);
 }
 
 1;

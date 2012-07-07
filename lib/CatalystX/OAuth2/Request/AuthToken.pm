@@ -7,9 +7,14 @@ with 'CatalystX::OAuth2';
 # ABSTRACT: An oauth2 authentication token implementation
 
 has grant_type => ( is => 'ro', required => 1 );
-has code  => ( is => 'ro', required => 1 );
+has code       => ( is => 'ro', required => 1 );
+has refresh_token => (
+  isa     => 'Bool',
+  is      => 'rw',
+  default => 0
+);
 
-around _params => sub {shift->(@_), qw(code grant_type)};
+around _params => sub { shift->(@_), qw(code grant_type) };
 
 sub _build_query_parameters {
   my ($self) = @_;
@@ -23,12 +28,17 @@ sub _build_query_parameters {
       . 'or was issued to another client.'
     };
 
-  my $token = $self->store->create_access_token($self->code);
-  return {
+  my $with_refresh = $self->refresh_token;
+  my $token = $self->store->create_access_token( $self->code, $with_refresh );
+  my $res   = {
     access_token => $token->as_string,
     token_type   => $token->type,
-    expires_in   => $token->expires_in
+    expires_in   => $token->expires_in,
   };
+  $res->{refresh_token} = $token->to_refresh_token->as_string
+    if $with_refresh;
+
+  return $res;
 }
 
 1;

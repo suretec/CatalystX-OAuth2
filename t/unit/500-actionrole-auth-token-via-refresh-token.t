@@ -8,22 +8,42 @@ use CatalystX::Test::MockContext;
 my $json = JSON::Any->new;
 my $mock = mock_context('AuthServer');
 
-# my $refresh = AuthServer->model('DB::RefreshToken')->create(
-#   { code                  => { client => { endpoint  => '/client/foo' } },
-#     from_access_token_map => [        { access_token => {} } ]
-#   }
-# );
-my $code =
-  AuthServer->model('DB::Code')
-  ->create( { client => { endpoint => '/client/foo' }, is_active => 1 } );
-my $token = $code->tokens->create( {} );
+my $code = AuthServer->model('DB::Code')->create(
+  { client    => { endpoint => '/client/foo' },
+    is_active => 1
+  }
+);
 
-my $refresh = $token->to_refresh_token_map->create(
-  { code_id => $code->id, refresh_token => { code_id => $code->id } } );
-
-$refresh = $refresh->refresh_token;
+my $refresh;
 
 {
+  my $uri = URI->new('/withrefresh/token');
+  $uri->query_form(
+    { grant_type   => 'authorization_code',
+      redirect_uri => '/client/foo',
+      code         => $code->as_string
+    }
+  );
+  my $c = $mock->( GET $uri );
+  $c->dispatch;
+  $c->log->_flush;
+  is_deeply( $c->error, [] );
+  my $res = $c->res;
+  is_deeply(
+    $json->jsonToObj( $res->body ),
+    { access_token  => 1,
+      token_type    => 'bearer',
+      expires_in    => 3600,
+      refresh_token => 2
+    }
+  );
+
+  is( $res->status, 200 );
+}
+
+{
+  my $refresh = AuthServer->model('DB::RefreshToken')->find(2);
+
   my $uri = URI->new('/refresh');
   $uri->query_form(
     { grant_type    => 'refresh_token',
@@ -36,7 +56,6 @@ $refresh = $refresh->refresh_token;
   is_deeply( $c->error, [] );
   my $res = $c->res;
   my $obj = $json->jsonToObj( $res->body );
-  $refresh->discard_changes;
   ok( defined( $refresh->to_access_token ) );
   ok( !$refresh->is_active );
   is_deeply(
