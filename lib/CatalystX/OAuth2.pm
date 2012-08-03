@@ -113,8 +113,8 @@ token.
 
 requires '_build_query_parameters';
 
-# spec isn't clear re missing endpoint uris, being strict for now
-has redirect_uri  => ( is => 'ro', required => 1 );
+# spec isn't clear re missing endpoint uris
+has redirect_uri  => ( is => 'ro', required => 0 );
 
 has store => (
   is        => 'rw',

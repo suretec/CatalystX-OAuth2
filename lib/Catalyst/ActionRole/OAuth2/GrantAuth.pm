@@ -51,9 +51,11 @@ sub build_oauth2_request {
     $req = CatalystX::OAuth2::Request::GrantAuth->new(
       %{ $c->req->query_parameters } );
     $req->store($store);
+    $req->user($c->user) if $c->user_exists;
   }
   catch {
     $c->log->error($_);
+
     # need to figure out a better way, but this will do for now
     $c->res->body('warning: response_type/client_id invalid or missing');
 

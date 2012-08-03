@@ -1,11 +1,18 @@
 package CatalystX::OAuth2::Request::GrantAuth;
 use Moose;
+use Moose::Util::TypeConstraints;
+use MooseX::SetOnce;
 use URI;
 
 # ABSTRACT: A catalyst request extension for approving grants
 
 with 'CatalystX::OAuth2::Grant';
 
+has user => (
+  isa   => duck_type(['id']),
+  is     => 'rw',
+  traits => ['SetOnce']
+);
 has user_is_valid => ( isa => 'Bool', is => 'rw', default => 0 );
 has approved => (
   isa       => 'Bool',

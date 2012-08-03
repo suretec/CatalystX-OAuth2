@@ -19,7 +19,7 @@ my $code =
     { response_type => 'code',
       client_id     => 1,
       state         => 'bar',
-      code          => 'bogus',
+      code          => 999999,
       redirect_uri  => '/client/foo',
     }
   );
@@ -58,7 +58,7 @@ my $code =
     { response_type => 'code',
       client_id     => 1,
       state         => 'bar',
-      code          => 'bogus',
+      code          => 99999,
       redirect_uri  => '/client/foo',
       approved      => 1
     }

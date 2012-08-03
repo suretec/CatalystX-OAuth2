@@ -1,5 +1,6 @@
 package Catalyst::ActionRole::OAuth2::ProtectedResource;
 use Moose::Role;
+use CatalystX::OAuth2::Request::ProtectedResource;
 
 # ABSTRACT: Resource endpoint for OAuth2 authentication flows
 
@@ -33,21 +34,26 @@ regular action.
 
 =cut
 
-before execute => sub {
-  my ( $self, $controller, $c ) = @_;
+with 'CatalystX::OAuth2::ActionRole::RequestInjector';
 
-  $c->res->status(401), $c->detach
-    unless $c->user_exists;
-  my $client = $c->user;
+sub build_oauth2_request {
+  my ( $self, $controller, $c ) = @_;
 
   my $auth = $c->req->header('Authorization')
     or $c->res->status(401), $c->detach;
   my ( $type, $token ) = split ' ', $auth;
 
-  $c->res->status(401), $c->detach
-    unless defined($token)
-      && length($token)
-      && $controller->store->verify_client_token( $client->id, $token );
-};
+  my $is_valid = defined($token)
+    && length($token);
+
+  if ( $is_valid
+    and my $token_obj = $controller->store->verify_client_token($token) )
+  {
+    return CatalystX::OAuth2::Request::ProtectedResource->new(
+      token => $token_obj );
+  }
+  $c->res->status(401);
+  $c->detach;
+}
 
 1;

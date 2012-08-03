@@ -121,12 +121,14 @@ sub verify_client_secret {
 }
 
 sub verify_client_token {
-  my ( $self, $client_id, $access_token ) = @_;
-  my $client = $self->find_client($client_id);
+  my ( $self, $access_token ) = @_;
+  my $rs = $self->_client_model;
   return 0 unless defined $access_token;
-  return 1
-    if $client->related_resultset( $self->code_relation )
-      ->related_resultset( $self->token_relation )->find($access_token);
+  my $token_rs = $rs->related_resultset( $self->code_relation )
+    ->related_resultset( $self->token_relation );
+  if(my $token = $token_rs->find($access_token)) {
+    return $token;
+  }
   return 0;
 }
 

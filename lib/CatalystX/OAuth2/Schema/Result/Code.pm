@@ -8,7 +8,8 @@ __PACKAGE__->table('code');
 __PACKAGE__->add_columns(
   client_id => { data_type => 'int', is_nullable => 0 },
   id => { data_type => 'int', is_auto_increment => 1, is_nullable => 0 },
-  is_active => { data_type => 'int', is_nullable => 0, default_value => 0 }
+  is_active => { data_type => 'int', is_nullable => 0, default_value => 0 },
+  owner_id => { data_type => 'int', is_nullable => 1 }
 );
 __PACKAGE__->set_primary_key(qw(id));
 __PACKAGE__->belongs_to(
@@ -19,9 +20,16 @@ __PACKAGE__->has_many( tokens => 'CatalystX::OAuth2::Schema::Result::Token' =>
 __PACKAGE__->has_many(
   refresh_tokens => 'CatalystX::OAuth2::Schema::Result::RefreshToken' =>
     { 'foreign.code_id' => 'self.id' } );
+__PACKAGE__->belongs_to(
+  owner => 'CatalystX::OAuth2::Schema::Result::Owner',
+  { 'foreign.id' => 'self.owner_id' }
+);
 
 sub as_string { shift->id }
 
-sub activate { shift->update( { is_active => 1 } ) }
+sub activate {
+  my($self, $owner_id) = @_;
+  $self->update( { is_active => 1, owner_id => $owner_id } )
+}
 
 1;
