@@ -1,6 +1,8 @@
+# PODNAME: lib/CatalystX/OAuth2/Manual.pod
+
 =head1 NAME
 
-CatalystX::OAuth2::Tutorial - CatalystX::OAuth2: Overview
+CatalystX::OAuth2::Manual - CatalystX::OAuth2: Overview
 
 =head1 DESCRIPTION
 
