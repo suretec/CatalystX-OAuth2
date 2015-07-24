@@ -19,6 +19,7 @@ sub for_session { }
 
 package Test::Mock::Realm;
 use Moose;
+use URI;
 our $user;
 our $store = Test::Mock::Store->new;
 our @called;
@@ -61,7 +62,19 @@ my $mock = mock_context('ClientApp');
 
   my $extend_perms_uri = $cred->extend_permissions($callback_uri);
 
-  is( $c->res->redirect, $extend_perms_uri );
+  # We make the stringy redirect into a URL object to compare
+  # since the query part can be ordered variously (did this to
+  # solve a failure case when the query keywords were ordered 
+  # differently but in real life they are equal by the definitation of
+  # URL equality.
+
+  my $redirect_url = URI->new($c->res->redirect);
+  is $redirect_url->scheme, $extend_perms_uri->scheme;
+  is $redirect_url->path, $extend_perms_uri->path;
+  is $redirect_url->authority, $extend_perms_uri->authority;
+  is_deeply(
+    +{$redirect_url->query_form},
+    +{$extend_perms_uri->query_form} );
 }
 
 my $j = JSON::Any->new;
