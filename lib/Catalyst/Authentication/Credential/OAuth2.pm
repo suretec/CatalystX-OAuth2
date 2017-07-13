@@ -52,6 +52,13 @@ Default is GET; some providers require POST
 
 Default is 'application/x-www-form-urlencoded', some providers support 'application/json'. 
 
+=head2 has_extra_find_user_token_fields
+
+By default we call ->find_user on the store with a hashref that contains key 'token' and the
+value of the access_token (which we get from calling the 'token_uri').  The results of calling
+the token_uri is usually a JSON named array structure which can contain other fields such as
+id_token (typically a JWT).  You can set this to an arrayref of extra fields you want to pass.
+
 =cut
 
 has [qw(grant_uri token_uri client_id)] => (
@@ -62,6 +69,7 @@ has [qw(grant_uri token_uri client_id)] => (
 
 has token_uri_method => (is=>'ro', required=>1, default=>'GET');
 has token_uri_post_content_type => (is=>'ro', required=>1, default=>'application/x-www-form-urlencoded');
+has extra_find_user_token_fields => (is=>'ro', required=>0, predicate=>'has_extra_find_user_token_fields');
 
 has client_secret => (
   is        => 'ro',
@@ -92,7 +100,12 @@ sub authenticate {
     my $token =
       $self->request_access_token( $callback_uri, $code, $auth_info );
     die 'Error validating verification code' unless $token;
-    return $realm->find_user( { token => $token->{access_token}, %{$token} }, $ctx );
+
+    my %find_user_fields = (token => $token->{access_token});
+    if($self->has_extra_find_user_token_fields) {
+      $find_user_fields{$_} = $token->{$_} for @{$self->extra_find_user_token_fields};
+    }
+    return $realm->find_user( \%find_user_fields, $ctx );
   }
 }
 
@@ -130,7 +143,6 @@ sub request_access_token {
     grant_type   => 'authorization_code');
   push(@data, (state=>$auth_info->{state})) if exists $auth_info->{state};
   push(@data, (client_secret=>$self->client_secret)) if $self->has_client_secret;
-
 
   my $req;
   if($self->token_uri_method eq 'GET') {
