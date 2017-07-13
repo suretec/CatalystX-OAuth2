@@ -2,6 +2,7 @@ package Catalyst::Authentication::Credential::OAuth2;
 use Moose;
 use MooseX::Types::Common::String qw(NonEmptySimpleStr);
 use LWP::UserAgent;
+use HTTP::Request::Common;
 use JSON::Any;
 use Moose::Util;
 
@@ -28,6 +29,29 @@ use Moose::Util;
 This module implements authentication via OAuth2 credentials, giving you a
 user object which stores tokens for accessing protected resources.
 
+=head1 ATTRIBUTES
+
+=head2 grant_uri
+
+=head2 token_uri
+
+=head2 client_id
+
+Required attributes that you get from your Oauth2 provider
+
+=head2 client_secret
+
+optional secret code from your Oauth2 provider (you need to review the docs from
+your provider).
+
+=head2 token_uri_method
+
+Default is GET; some providers require POST
+
+=head2 token_uri_post_content_type
+
+Default is 'application/x-www-form-urlencoded', some providers support 'application/json'. 
+
 =cut
 
 has [qw(grant_uri token_uri client_id)] => (
@@ -35,6 +59,9 @@ has [qw(grant_uri token_uri client_id)] => (
   isa      => NonEmptySimpleStr,
   required => 1,
 );
+
+has token_uri_method => (is=>'ro', required=>1, default=>'GET');
+has token_uri_post_content_type => (is=>'ro', required=>1, default=>'application/x-www-form-urlencoded');
 
 has client_secret => (
   is        => 'ro',
@@ -65,7 +92,7 @@ sub authenticate {
     my $token =
       $self->request_access_token( $callback_uri, $code, $auth_info );
     die 'Error validating verification code' unless $token;
-    return $realm->find_user( { token => $token->{access_token}, }, $ctx );
+    return $realm->find_user( { token => $token->{access_token}, %{$token} }, $ctx );
   }
 }
 
@@ -82,9 +109,11 @@ sub extend_permissions {
   my $query = {
     response_type => 'code',
     client_id     => $self->client_id,
-    redirect_uri  => $callback_uri
+    redirect_uri  => $callback_uri,
   };
   $query->{state} = $auth_info->{state} if exists $auth_info->{state};
+  $query->{scope} = $auth_info->{scope} if exists $auth_info->{scope};
+
   $uri->query_form($query);
   return $uri;
 }
@@ -94,17 +123,39 @@ my $j = JSON::Any->new;
 sub request_access_token {
   my ( $self, $callback_uri, $code, $auth_info ) = @_;
   my $uri   = URI->new( $self->token_uri );
-  my $query = {
+  my @data = (
     client_id    => $self->client_id,
-    redirect_uri => $callback_uri,
+    redirect_uri => "$callback_uri", #stringify for JSON
     code         => $code,
-    grant_type   => 'authorization_code'
-  };
-  $query->{state} = $auth_info->{state} if exists $auth_info->{state};
-  $uri->query_form($query);
-  my $response = $self->ua->get($uri);
-  return unless $response->is_success;
-  return $j->jsonToObj( $response->decoded_content );
+    grant_type   => 'authorization_code');
+  push(@data, (state=>$auth_info->{state})) if exists $auth_info->{state};
+  push(@data, (client_secret=>$self->client_secret)) if $self->has_client_secret;
+
+
+  my $req;
+  if($self->token_uri_method eq 'GET') {
+    $uri->query_form(+{@data});
+    $req = GET $uri;
+  } elsif($self->token_uri_method eq 'POST') {
+    if($self->token_uri_post_content_type eq 'application/json') {
+      $req = POST $uri, 'Content_Type' => 'application/json', Content => $j->to_json(+{@data});
+    } elsif($self->token_uri_post_content_type eq 'application/x-www-form-urlencoded') {
+      $req = POST $uri, 'Content_Type' => 'application/x-www-form-urlencoded', Content => \@data;
+    } else {
+      die "Unrecognized 'token_uri_post_content_type' of '${\$self->token_uri_post_content_type}'";
+    }
+  } else {
+    die "Unrecognized 'token_uri_method' of '${\$self->token_uri_method}'";
+  }
+
+  my $response = $self->ua->request($req);
+  if($response->is_success) {
+    my $data = $j->jsonToObj( $response->decoded_content ); # Eval wrap
+    return $data;
+  } else {
+    return;
+  }
 }
 
 1;
+
