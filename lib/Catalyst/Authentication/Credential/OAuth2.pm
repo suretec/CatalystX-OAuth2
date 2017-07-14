@@ -44,6 +44,10 @@ Required attributes that you get from your Oauth2 provider
 optional secret code from your Oauth2 provider (you need to review the docs from
 your provider).
 
+=head2 scope
+
+Value of 'scope' field submitted to the grant_uri
+
 =head2 token_uri_method
 
 Default is GET; some providers require POST
@@ -70,6 +74,7 @@ has [qw(grant_uri token_uri client_id)] => (
 has token_uri_method => (is=>'ro', required=>1, default=>'GET');
 has token_uri_post_content_type => (is=>'ro', required=>1, default=>'application/x-www-form-urlencoded');
 has extra_find_user_token_fields => (is=>'ro', required=>0, predicate=>'has_extra_find_user_token_fields');
+has scope => (is=>'ro', required=>0, predicate=>'has_scope');
 
 has client_secret => (
   is        => 'ro',
@@ -125,6 +130,7 @@ sub extend_permissions {
     redirect_uri  => $callback_uri,
   };
   $query->{state} = $auth_info->{state} if exists $auth_info->{state};
+  $query->{scope} = $self->scope if $self->has_scope;
   $query->{scope} = $auth_info->{scope} if exists $auth_info->{scope};
 
   $uri->query_form($query);
