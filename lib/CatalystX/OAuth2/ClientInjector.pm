@@ -14,8 +14,12 @@ around 'find_user' => sub {
   my ( $authinfo, $c ) = @_;
   my $user = $self->$orig(@_);
   my $token = $authinfo->{token} or return;
-  $self->_apply_client_role( $user, $authinfo->{token} );
-  return $user;
+  if($user) {
+    $self->_apply_client_role( $user, $authinfo->{token} );
+    return $user;
+  } else {
+    return;
+  }
 };
 
 around 'restore_user' => sub {
