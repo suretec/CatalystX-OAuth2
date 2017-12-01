@@ -46,7 +46,11 @@ your provider).
 
 =head2 scope
 
-Value of 'scope' field submitted to the grant_uri
+Value of 'scope' field submitted to the grant_uri.  Optional.
+
+=head2 audience
+
+Value of 'audience' field submitted to the grant_uri.  Optional.
 
 =head2 token_uri_method
 
@@ -75,6 +79,7 @@ has token_uri_method => (is=>'ro', required=>1, default=>'GET');
 has token_uri_post_content_type => (is=>'ro', required=>1, default=>'application/x-www-form-urlencoded');
 has extra_find_user_token_fields => (is=>'ro', required=>0, predicate=>'has_extra_find_user_token_fields');
 has scope => (is=>'ro', required=>0, predicate=>'has_scope');
+has audience => (is=>'ro', required=>0, predicate=>'has_audience');
 
 has client_secret => (
   is        => 'ro',
@@ -132,6 +137,8 @@ sub extend_permissions {
   $query->{state} = $auth_info->{state} if exists $auth_info->{state};
   $query->{scope} = $self->scope if $self->has_scope;
   $query->{scope} = $auth_info->{scope} if exists $auth_info->{scope};
+  $query->{audience} = $self->audience if $self->has_audience;
+  $query->{audience} = $auth_info->{audience} if exists $auth_info->{audience};
 
   $uri->query_form($query);
   return $uri;
